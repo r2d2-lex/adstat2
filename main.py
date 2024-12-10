@@ -14,7 +14,15 @@ def main():
 
     with LdapManager(config.LDAP_SERVER, config.USERNAME, config.PASSWORD, config.BASE_DN_ROOT) as ldap_manger:
         # # Получение информации о пользователях
-
+        attribute_list = ['cn', 'uid', 'msSFU30Name', 'msSFU30NisDomain', 'uidNumber', 'gidNumber', 'loginShell',
+                          'unixHomeDirectory']
+        users_result = ldap_manger.get_users_list(attribute_list)
+        if users_result:
+            for user in users_result:
+                user_cn = user.get('cn')
+                user_acc = user.get('sAMAccountName')
+                user_uid = user.get('uid')
+                print(f'Пользователь: {user_cn}, sAMAccountName: {user_acc}, user_uid: {user_uid}')
 
         # # Получение информации о группах
         # attribute_list = ['gidNumber', 'description']
