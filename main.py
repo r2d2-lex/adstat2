@@ -13,16 +13,28 @@ def main():
     logging.add(sys.stderr, level=config.LOGGING_LEVEL)
 
     with LdapManager(config.LDAP_SERVER, config.USERNAME, config.PASSWORD, config.BASE_DN_ROOT) as ldap_manger:
-        # # Получение информации о пользователях
-        attribute_list = ['cn', 'uid', 'msSFU30Name', 'msSFU30NisDomain', 'uidNumber', 'gidNumber', 'loginShell',
-                          'unixHomeDirectory']
-        users_result = ldap_manger.get_users_list(attribute_list)
-        if users_result:
-            for user in users_result:
-                user_cn = user.get('cn')
-                user_acc = user.get('sAMAccountName')
-                user_uid = user.get('uid')
-                print(f'Пользователь: {user_cn}, sAMAccountName: {user_acc}, user_uid: {user_uid}')
+        user_dn = 'CN=2222 111,OU=Users,OU=IT_GROUP,{}'.format(config.BASE_DN_ROOT)
+        unix_attributes = {
+            'msSFU30Name': 'test555',
+            'loginShell': '/bin/sh',
+            'unixHomeDirectory': '/home/test555',
+        }
+        ldap_manger.update_user_values(user_dn, unix_attributes)
+
+        # # Вывод информации о пользователях
+        # user_info = ldap_manger.get_users()
+        # for item in user_info:
+        #     print(item)
+
+        # # # Получение информации о пользователях
+        # attribute_list = ['cn', 'uid', 'msSFU30Name', 'msSFU30NisDomain', 'uidNumber', 'gidNumber', 'loginShell',
+        #                   'unixHomeDirectory']
+        # users_result = ldap_manger.get_users_list(attribute_list)
+        # if users_result:
+        #     for user in users_result:
+        #         user_cn = user.get('cn')
+        #         distinguishedName = user.get('distinguishedName')
+        #         print(f'Пользователь: {user_cn}, distinguishedName: {distinguishedName}')
 
         # # Получение информации о группах
         # attribute_list = ['gidNumber', 'description']
