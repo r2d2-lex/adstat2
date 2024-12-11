@@ -1,7 +1,20 @@
+from django.http import JsonResponse
 from django.shortcuts import render
 from django.conf import settings
 from loguru import logger as logging
 from .ldap_manager import LdapManager
+
+
+def get_user_data(request):
+    username = request.GET.get('username')
+    with LdapManager(settings.LDAP_SERVER, settings.USERNAME, settings.PASSWORD, settings.BASE_DN_ROOT) as ldap_manger:
+        attribute_list = ['cn', 'uid', 'msSFU30Name', 'msSFU30NisDomain', 'uidNumber', 'gidNumber', 'loginShell',
+                          'unixHomeDirectory', 'distinguishedName']
+        try:
+            users_result = ldap_manger.get_sam_user(username, attribute_list)[0]
+        except IndexError:
+            logging.debug('Что то пошло не так...')
+    return JsonResponse(users_result)
 
 
 def index(request):

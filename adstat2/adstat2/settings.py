@@ -102,7 +102,7 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
-LOGGING_LEVEL = 'DEBUG'
+LOGGING_LEVEL = 'INFO'
 
 # Настройка логирования
 logging.remove()

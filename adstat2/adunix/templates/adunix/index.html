@@ -3,11 +3,11 @@
 <html lang="en">
 <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
 <script src="{% static 'js/jquery-3.7.1.min.js' %}"></script>
+<script src="{% static 'js/user.js' %}"></script>
 <head>
-    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.min.css' %}">
     <meta charset="UTF-8">
-    <title>Yo</title>
-
+    <title>ADStat</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.min.css' %}">
 </head>
 <body>
 
@@ -24,32 +24,32 @@
                 <form class="" method="post" action="#">
                 {% csrf_token %}
 
-                <div class="form-group">
+                <div class="form-group mb-2">
                     <label for="users">Выберите пользователя: </label>
                     <select id="users" class="form-control form-control-sm" name="users" size="1">
                         <option value="" disabled selected>Выберите пользователя</option>
                         {% for user in users %}
-                            <option value="{{ user.cn }}">{{ user.sAMAccountName }}</option>
+                            <option value="{{ user.sAMAccountName }}">{{ user.cn }}</option>
                         {% endfor %}
                     </select>
                 </div>
 
-                <div class="form-group">
+                <div class="form-group mb-2">
                     <label for="cn">CN пользователя: </label>
                     <input id="cn" class="form-control" type="text" name="cn" placeholder="Имя пользователя" readonly>
                 </div>
 
-                <div class="form-group">
+                <div class="form-group mb-2">
                     <label for="sAMAccountName">Login пользователя: </label>
                     <input id="sAMAccountName" class="form-control" type="text" name="sAMAccountName" placeholder="sAMAccountName" readonly>
                 </div>
 
-                <div class="form-group">
+                <div class="form-group mb-2">
                     <label for="distinguishedName">distinguishedName: </label>
                     <input id="distinguishedName" class="form-control" type="text" name="distinguishedName" placeholder="" readonly>
                 </div>
 
-                <div class="form-group">
+                <div class="form-group mb-2">
                     <label for="groups">Выберите группу: </label>
                     <select id="groups" class="form-control form-control-sm" name="groups" size="1">
                     <option value="" disabled selected>Выберите группу пользователя</option>
@@ -61,12 +61,12 @@
                     </select>
                 </div>
 
-                <div class="form-group">
+                <div class="form-group mb-2">
                     <label for="gidNumber">gidNumber: </label>
                     <input id="gidNumber" class="form-control" type="text" name="gidNumber" placeholder="">
                 </div>
 
-                <div class="form-group">
+                <div class="form-group mb-2">
                     <label for="uid">uid: </label>
                     <input id="uid" class="form-control" type="text" name="uid" placeholder="">
                 </div>
