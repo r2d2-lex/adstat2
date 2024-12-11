@@ -86,6 +86,14 @@ class LdapManager:
                                )
         return [entry for entry in self.connection.entries]
 
+    def get_sam_user(self, sam_account_name, attributes) -> list:
+        self.connection.search(self.base_dn,
+                               '(sAMAccountName={})'.format(sam_account_name),
+                               search_scope=self.scope,
+                               attributes=ALL_ATTRIBUTES,
+                               )
+        return make_attribute_records(self.connection, self.ldap_member_attr, 'Пользователь', attributes)
+
     def get_users_list(self, attributes=None) -> list:
         attributes.append(self.user_dn_param)
         self.connection.search(self.base_dn,
