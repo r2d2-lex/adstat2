@@ -38,4 +38,14 @@ $(document).ready(function() {
             $('#unixHomeDirectory').val('');
         }
     });
+
+    $('#groups').change(function() {
+        let gidNumber = $(this).val();
+        if (gidNumber) {
+            $('#gidNumber').val(gidNumber);
+            } else {
+            //
+        }
+    });
+
 });
