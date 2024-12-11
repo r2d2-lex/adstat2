@@ -6,5 +6,12 @@
 </head>
 <body>
 <h1>Hello World!</h1>
+<select id="groups" class="form-control form-control-sm" name="groups" size="1">
+{% for group in groups%}
+    {% if group.cn and group.gidNumber %}
+        <option value="{{ group.gidNumber }}">{{ group.cn }}</option>
+    {% endif %}
+{% endfor %}
+</select>
 </body>
 </html>
