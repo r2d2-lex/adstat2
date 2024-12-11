@@ -10,13 +10,102 @@
 
 </head>
 <body>
-<h1>Hello World!</h1>
-<select id="groups" class="form-control form-control-sm" name="groups" size="1">
-{% for group in groups%}
-    {% if group.cn and group.gidNumber %}
-        <option value="{{ group.gidNumber }}">{{ group.cn }}</option>
-    {% endif %}
-{% endfor %}
-</select>
+
+
+<div class="row">
+    <div class="col"></div>
+
+    <div class="col-3">
+        <div class="card border-danger mt-5">
+            <div class="card-header bg-light">
+                <h4 class="card-title">ADStat (Unix attributes)</h4>
+            </div>
+            <div class="card-body">
+                <form class="" method="post" action="#">
+                {% csrf_token %}
+
+                <div class="form-group">
+                    <label for="users">Выберите пользователя: </label>
+                    <select id="users" class="form-control form-control-sm" name="users" size="1">
+                        <option value="" disabled selected>Выберите пользователя</option>
+                        {% for user in users %}
+                            <option value="{{ user.cn }}">{{ user.sAMAccountName }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="cn">CN пользователя: </label>
+                    <input id="cn" class="form-control" type="text" name="cn" placeholder="Имя пользователя" readonly>
+                </div>
+
+                <div class="form-group">
+                    <label for="sAMAccountName">Login пользователя: </label>
+                    <input id="sAMAccountName" class="form-control" type="text" name="sAMAccountName" placeholder="sAMAccountName" readonly>
+                </div>
+
+                <div class="form-group">
+                    <label for="distinguishedName">distinguishedName: </label>
+                    <input id="distinguishedName" class="form-control" type="text" name="distinguishedName" placeholder="" readonly>
+                </div>
+
+                <div class="form-group">
+                    <label for="groups">Выберите группу: </label>
+                    <select id="groups" class="form-control form-control-sm" name="groups" size="1">
+                    <option value="" disabled selected>Выберите группу пользователя</option>
+                    {% for group in groups%}
+                        {% if group.cn and group.gidNumber %}
+                            <option value="{{ group.gidNumber }}">{{ group.cn }}</option>
+                        {% endif %}
+                    {% endfor %}
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="gidNumber">gidNumber: </label>
+                    <input id="gidNumber" class="form-control" type="text" name="gidNumber" placeholder="">
+                </div>
+
+                <div class="form-group">
+                    <label for="uid">uid: </label>
+                    <input id="uid" class="form-control" type="text" name="uid" placeholder="">
+                </div>
+
+                <div class="form-group">
+                    <label for="msSFU30Name">msSFU30Name: </label>
+                    <input id="msSFU30Name" class="form-control" type="text" name="msSFU30Name" placeholder="">
+                </div>
+
+                <div class="form-group">
+                    <label for="msSFU30NisDomain">msSFU30NisDomain: </label>
+                    <input id="msSFU30NisDomain" class="form-control" type="text" name="msSFU30NisDomain" placeholder="">
+                </div>
+
+                <div class="form-group">
+                    <label for="uidNumber">uidNumber: </label>
+                    <input id="uidNumber" class="form-control" type="text" name="uidNumber" placeholder="">
+                </div>
+
+                <div class="form-group">
+                    <label for="loginShell">loginShell: </label>
+                    <input id="loginShell" class="form-control" type="text" name="loginShell" placeholder="">
+                </div>
+
+                <div class="form-group">
+                    <label for="unixHomeDirectory">unixHomeDirectory: </label>
+                    <input id="unixHomeDirectory" class="form-control" type="text" name="unixHomeDirectory" placeholder="">
+                </div>
+
+                <input class="btn btn-success" type="submit" value="Сохранить">
+                <input class="btn btn-success" type="submit" value="Очистить">
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col"></div>
+</div>
+
+
 </body>
 </html>
