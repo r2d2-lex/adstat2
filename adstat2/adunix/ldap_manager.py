@@ -5,6 +5,10 @@ from ldap3.core.exceptions import LDAPCursorAttributeError, LDAPKeyError, LDAPAt
 
 from typing import List, Dict
 
+GROUP_SEARCH_FILTER = '(objectClass=group)'
+OU_SEARCH_FILTER = '(objectClass=organizationalUnit)'
+USER_SEARCH_FILTER = '(objectClass=user)'
+
 
 def make_attribute_records(connection, master_attribute, description, attributes) -> List[Dict[str, str]]:
     result = []
