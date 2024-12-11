@@ -9,10 +9,11 @@ https://docs.djangoproject.com/en/4.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
-
+from loguru import logger as logging
 from pathlib import Path
 import environ
 import os
+import sys
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -101,7 +102,11 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+LOGGING_LEVEL = 'DEBUG'
 
+# Настройка логирования
+logging.remove()
+logging.add(sys.stderr, level=LOGGING_LEVEL)
 
 env = environ.Env()
 environ.Env.read_env()
@@ -110,7 +115,7 @@ USERNAME = env('USERNAME')
 PASSWORD = env('PASSWORD')
 LDAP_SERVER = env('LDAP_SERVER')
 BASE_DN_ROOT = env('BASE_DN_ROOT')
-LOGGING_LEVEL = 'DEBUG'
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
