@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
+import environ
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -100,6 +102,15 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+
+env = environ.Env()
+environ.Env.read_env()
+environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
+USERNAME = env('USERNAME')
+PASSWORD = env('PASSWORD')
+LDAP_SERVER = env('LDAP_SERVER')
+BASE_DN_ROOT = env('BASE_DN_ROOT')
+LOGGING_LEVEL = 'DEBUG'
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
