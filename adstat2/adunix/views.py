@@ -27,8 +27,7 @@ def index(request):
         group_result = sorted(group_result, key=lambda x: x['cn'])
 
         # # Получение информации о пользователях
-        attribute_list = ['cn', 'uid', 'msSFU30Name', 'msSFU30NisDomain', 'uidNumber', 'gidNumber', 'loginShell',
-                          'unixHomeDirectory']
+        attribute_list = ['cn',]
         users_result = ldap_manger.get_users_list(attribute_list)
         users_result = sorted(users_result, key=lambda x: x['sAMAccountName'])
 
