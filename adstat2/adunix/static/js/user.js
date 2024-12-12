@@ -66,25 +66,20 @@ $(document).ready(function() {
     });
     // ----
     $('#save').click(function() {
-        var data = {
-            distinguishedName: $('#distinguishedName').val(),
-            gidNumber: $('#gidNumber').val(),
-            uid: $('#uid').val(),
-            msSFU30Name: $('#msSFU30Name').val(),
-            msSFU30NisDomain: $('#msSFU30NisDomain').val(),
-            uidNumber: $('#uidNumber').val(),
-            loginShell: $('#loginShell').val(),
-            unixHomeDirectory: $('#unixHomeDirectory').val(),
-        };
-        console.log(data);
         $.ajax({
             url: '/update_user_data/',
             type: 'POST',
-            data: data,
-            dataType: 'json',
-            beforeSend: function(xhr) {
-                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
-                    },
+            data: {
+                'distinguishedName': $('#distinguishedName').val(),
+                'gidNumber': $('#gidNumber').val(),
+                'uid': $('#uid').val(),
+                'msSFU30Name': $('#msSFU30Name').val(),
+                'msSFU30NisDomain': $('#msSFU30NisDomain').val(),
+                'uidNumber': $('#uidNumber').val(),
+                'loginShell': $('#loginShell').val(),
+                'unixHomeDirectory': $('#unixHomeDirectory').val(),
+                'csrfmiddlewaretoken': csrftoken,
+            },
             success: function(response) {
                 $('#result').text(response.result);
                 console.log('Всё хорошо');
@@ -94,8 +89,6 @@ $(document).ready(function() {
                 $('#result').text('Ошибка: ' + error);
                 console.log('Ошибка');
                 console.log(response.result);
-                console.log('Ошибка');
-        console.log(xhr.responseText);
             }
         });
     });

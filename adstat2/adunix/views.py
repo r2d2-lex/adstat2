@@ -1,19 +1,15 @@
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.conf import settings
-from django.views.decorators.csrf import csrf_exempt
 from loguru import logger as logging
 from .ldap_manager import LdapManager
 
 
-@csrf_exempt
 def update_user_data(request):
-    users_result = {
-        'result': 'Ошибка изменения данных',
-    }
+    result_message = 'Ошибка обновления данных'
     if request.method == 'POST':
         distinguished_name = request.POST.get('distinguishedName', None)
-        print(f'distinguished_name: {distinguished_name}')
+        logging.debug(f'distinguished_name: {distinguished_name}')
         if distinguished_name:
             unix_attributes = {
                 'gidNumber': request.POST.get('gidNumber', None),
@@ -24,14 +20,14 @@ def update_user_data(request):
                 'loginShell': request.POST.get('loginShell', None),
                 'unixHomeDirectory': request.POST.get('unixHomeDirectory', None),
             }
-            print(unix_attributes)
-
-            # with LdapManager(settings.LDAP_SERVER, settings.USERNAME, settings.PASSWORD,
-            #                  settings.BASE_DN_ROOT) as ldap_manger:
-            #     result = ldap_manger.update_user_values(distinguished_name, unix_attributes)
-            #     if result:
-            #         users_result = {'result': 'Данные обновлены'}
-    return JsonResponse(users_result)
+            logging.debug(unix_attributes)
+            with LdapManager(settings.LDAP_SERVER, settings.USERNAME, settings.PASSWORD,
+                             settings.BASE_DN_ROOT) as ldap_manger:
+                result = ldap_manger.update_user_values(distinguished_name, unix_attributes)
+                if result:
+                    result_message = 'Данные обновлены'
+        return JsonResponse({'result': result_message})
+    return JsonResponse({'result': result_message}, status=400)
 
 
 def get_user_data(request):

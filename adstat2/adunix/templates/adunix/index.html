@@ -21,9 +21,6 @@
                 <h4 class="card-title">ADStat (Unix attributes)</h4>
             </div>
             <div class="card-body">
-                <form class="" method="post" action="#">
-                {% csrf_token %}
-
                 <div class="form-group mb-2">
                     <label for="users">Выберите пользователя: </label>
                     <select id="users" class="form-control form-control-sm" name="users" size="1">
@@ -43,8 +40,7 @@
                     <label for="sAMAccountName">Login пользователя: </label>
                     <input id="sAMAccountName" class="form-control" type="text" name="sAMAccountName" placeholder="sAMAccountName" readonly>
                 </div>
-                <form method="post">
-                    {% csrf_token %}
+
                 <div class="form-group mb-2">
                     <label for="distinguishedName">distinguishedName: </label>
                     <input id="distinguishedName" class="form-control" type="text" name="distinguishedName" placeholder="" readonly>
@@ -61,6 +57,8 @@
                     {% endfor %}
                     </select>
                 </div>
+                <form method="post">
+                    {% csrf_token %}
 
                 <div class="form-group mb-2">
                     <label for="gidNumber">gidNumber: </label>
@@ -97,7 +95,7 @@
                     <input id="unixHomeDirectory" class="form-control" type="text" name="unixHomeDirectory" placeholder="">
                 </div>
 
-                <input class="btn btn-success" id="save" type="submit" value="Сохранить">
+                <input class="btn btn-success" id="save" name="" type="text" value="Сохранить">
                 <input class="btn btn-success" id="clear" type="submit" value="Очистить">
                 </form>
             </div>
