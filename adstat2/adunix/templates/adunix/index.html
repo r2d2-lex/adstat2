@@ -14,7 +14,7 @@
 
 
 <div class="row">
-    <div class="col"></div>
+    <div class="col"><div id="result"></div></div>
 
     <div class="col-3">
         <div class="card border-danger mt-5">
@@ -34,12 +34,7 @@
                 </div>
 
                 <div class="form-group mb-2">
-                    <label for="cn">CN пользователя: </label>
-                    <input id="cn" class="form-control" type="text" name="cn" placeholder="Имя пользователя" disabled  readonly>
-                </div>
-
-                <div class="form-group mb-2">
-                    <label for="sAMAccountName">Login пользователя: </label>
+                    <label for="sAMAccountName">Login пользователя (sAMAccountName): </label>
                     <input id="sAMAccountName" class="form-control" type="text" name="sAMAccountName" placeholder="sAMAccountName" disabled readonly>
                 </div>
 
@@ -83,7 +78,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="uidNumber">uidNumber: </label>
+                    <label for="uidNumber">uidNumber (Максимальный uid: {{ max_uid }}): </label>
                     <input id="uidNumber" class="form-control" type="text" name="uidNumber" placeholder="">
                 </div>
 
@@ -107,6 +102,5 @@
     <div class="col"></div>
 </div>
 
-<div id="result"></div>
 </body>
 </html>
