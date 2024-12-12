@@ -43,7 +43,8 @@
                     <label for="sAMAccountName">Login пользователя: </label>
                     <input id="sAMAccountName" class="form-control" type="text" name="sAMAccountName" placeholder="sAMAccountName" readonly>
                 </div>
-
+                <form method="post">
+                    {% csrf_token %}
                 <div class="form-group mb-2">
                     <label for="distinguishedName">distinguishedName: </label>
                     <input id="distinguishedName" class="form-control" type="text" name="distinguishedName" placeholder="" readonly>
@@ -96,8 +97,8 @@
                     <input id="unixHomeDirectory" class="form-control" type="text" name="unixHomeDirectory" placeholder="">
                 </div>
 
-                <input class="btn btn-success" type="submit" value="Сохранить">
-                <input class="btn btn-success" type="submit" value="Очистить">
+                <input class="btn btn-success" id="save" type="submit" value="Сохранить">
+                <input class="btn btn-success" id="clear" type="submit" value="Очистить">
                 </form>
             </div>
         </div>
@@ -106,6 +107,6 @@
     <div class="col"></div>
 </div>
 
-
+<div id="result"></div>
 </body>
 </html>
