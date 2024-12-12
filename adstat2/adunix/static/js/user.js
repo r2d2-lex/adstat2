@@ -13,7 +13,32 @@ function getCookie(name) {
     return cookieValue;
 }
 const csrftoken = getCookie('csrftoken');
-console.log('CSRF: '+ csrftoken);
+
+function showMessage(id, message, classAlert) {
+    $(id).empty();
+    let div = document.createElement('div');
+    div.classList.add("alert");
+    div.classList.add(classAlert);
+    div.setAttribute("role", "alert");
+    div.innerHTML = message;
+    $(id).append(div);
+}
+
+function splitStringToListItems(inputString) {
+    // Разбиваем строку по переносам строк
+    const lines = inputString.split('\n');
+    // Создаём элемент ul
+    const ul = document.createElement('ul');
+
+    // Проходим по каждой строке и создаём элемент li
+    lines.forEach(line => {
+        const li = document.createElement('li');
+        li.textContent = line; // Устанавливаем текст для li
+        ul.appendChild(li); // Добавляем li в ul
+    });
+    // Возвращаем HTML-код списка
+    return ul.outerHTML;
+}
 
 $(document).ready(function() {
     $('#users').change(function() {
@@ -81,13 +106,13 @@ $(document).ready(function() {
                 'csrfmiddlewaretoken': csrftoken,
             },
             success: function(response) {
-                $('#result').text(response.result);
+//                $('#result').text(response.result);
+//                showMessage('#result', response.result, 'alert-danger');
+                showMessage('#result', splitStringToListItems(response.result), 'alert-danger');
                 console.log('Всё хорошо');
-                console.log(response.result);
             },
             error: function(xhr, status, error) {
-                $('#result').text('Ошибка: ' + error);
-                console.log('Ошибка');
+                console.log('Ошибка Ajax');
                 console.log(response.result);
             }
         });

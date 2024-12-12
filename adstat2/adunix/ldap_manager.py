@@ -33,6 +33,12 @@ def make_attribute_records(connection, master_attribute, description, attributes
     return result
 
 
+def status_log(message, status_string):
+    logging.info(message)
+    status_string = status_string + '\r\n' + message
+    return status_string
+
+
 class LdapManager:
     def __init__(self, hostname, username, password, base_dn):
         self._server = Server(hostname, get_info=ALL)
@@ -53,22 +59,24 @@ class LdapManager:
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.connection.unbind()
 
-    def update_user_values(self, user_dn, attributes:dict) -> bool:
+    def update_user_values(self, user_dn, attributes:dict) -> (bool, str):
         # self.connection.modify(user_dn, {'msSFU30Name': [(MODIFY_REPLACE, [new_msSFU30Name])]})
+        status_string = ''
         result = False
         for attribute, value in attributes.items():
             try:
                 self.connection.modify(user_dn, {attribute: [(MODIFY_REPLACE, [value])]})
                 if self.connection.result['result'] == 0:
-                    logging.info(f"Атрибут {attribute} успешно изменен на {value}.")
+                    status_string = status_log(f'Атрибут {attribute} успешно изменен на {value}.', status_string)
                 else:
-                    logging.info(f"Ошибка при изменении атрибута {attribute}: {self.connection.result['description']}")
+                    status_string = status_log(f"Ошибка при изменении атрибута {attribute}: {self.connection.result['description']}",
+                               status_string)
                     return result
             except (IndexError, KeyError, LDAPAttributeError) as err:
-                logging.debug(f'Что-то пошло не так... Ошибка: {err}')
-                return result
+                status_string = status_log(f'Что-то пошло не так... Ошибка: {err}', status_string)
+                return result, status_string
         result = True
-        return result
+        return result, status_string
 
     def get_groups_list(self, attributes=None) -> list:
         self.connection.search(self.base_dn, '(objectClass=group)', search_scope=self.scope, attributes=ALL_ATTRIBUTES)

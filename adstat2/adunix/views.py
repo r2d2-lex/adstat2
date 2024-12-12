@@ -3,6 +3,7 @@ from django.shortcuts import render
 from django.conf import settings
 from loguru import logger as logging
 from .ldap_manager import LdapManager
+from .utils import safe_int
 
 
 def update_user_data(request):
@@ -23,9 +24,7 @@ def update_user_data(request):
             logging.debug(unix_attributes)
             with LdapManager(settings.LDAP_SERVER, settings.USERNAME, settings.PASSWORD,
                              settings.BASE_DN_ROOT) as ldap_manger:
-                result = ldap_manger.update_user_values(distinguished_name, unix_attributes)
-                if result:
-                    result_message = 'Данные обновлены'
+                result, result_message = ldap_manger.update_user_values(distinguished_name, unix_attributes)
         return JsonResponse({'result': result_message})
     return JsonResponse({'result': result_message}, status=400)
 
@@ -52,12 +51,14 @@ def index(request):
         group_result = sorted(group_result, key=lambda x: x['cn'])
 
         # # Получение информации о пользователях
-        attribute_list = ['cn',]
+        attribute_list = ['cn', 'uidNumber']
         users_result = ldap_manger.get_users_list(attribute_list)
         users_result = sorted(users_result, key=lambda x: x['sAMAccountName'])
+        max_uid = max([safe_int(item.get('uidNumber', 0)) for item in users_result])
 
         context = {
             'groups': group_result,
             'users': users_result,
+            'max_uid': max_uid,
         }
     return render(request, 'adunix/index.html', context)
