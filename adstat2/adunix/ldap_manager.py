@@ -95,7 +95,6 @@ class LdapManager:
         return make_attribute_records(self.connection, self.ldap_member_attr, 'Пользователь', attributes)
 
     def get_users_list(self, attributes=None) -> list:
-        attributes.append(self.user_dn_param)
         self.connection.search(self.base_dn,
                                '(&(objectClass=user)(!(objectClass=computer)))',
                                search_scope=self.scope,
