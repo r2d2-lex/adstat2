@@ -67,6 +67,14 @@ def get_user_data(request):
     return JsonResponse(users_result)
 
 
+def get_new_uid(request):
+    with LdapManager(settings.LDAP_SERVER, settings.USERNAME, settings.PASSWORD, settings.BASE_DN_ROOT) as ldap_manger:
+        attribute_list = ['uidNumber']
+        users_result = ldap_manger.get_users_list(attribute_list)
+        new_uid = max([safe_int(item.get('uidNumber', 0)) for item in users_result]) + 1
+    return JsonResponse({'uidNumber': new_uid, 'domain': settings.DOMAIN})
+
+
 def index(request):
     logging.debug(f'SETTINGS "{settings.LDAP_SERVER}", "{settings.USERNAME}", "{settings.PASSWORD}", "{settings.BASE_DN_ROOT}"')
 

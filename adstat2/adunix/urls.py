@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import index, get_user_data, update_user_data, delete_user_data
+from .views import index, get_user_data, update_user_data, delete_user_data, get_new_uid
 
 app_name = 'adunix'
 urlpatterns = [
@@ -7,4 +7,5 @@ urlpatterns = [
     path('get_user_data/', get_user_data, name='get_user_data'),
     path('update_user_data/', update_user_data, name='update_user_data'),
     path('delete_user_data/', delete_user_data, name='delete_user_data'),
+    path('get_new_uid/', get_new_uid, name='get_new_uid'),
 ]

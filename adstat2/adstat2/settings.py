@@ -115,6 +115,7 @@ USERNAME = env('USERNAME')
 PASSWORD = env('PASSWORD')
 LDAP_SERVER = env('LDAP_SERVER')
 BASE_DN_ROOT = env('BASE_DN_ROOT')
+DOMAIN = env('DOMAIN')
 
 
 # Internationalization

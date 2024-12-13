@@ -137,16 +137,34 @@ $(document).ready(function() {
     });
     // ---- Заполнение unix атрибутов
     $('#fill').click(function() {
-        let userName = $('#sAMAccountName').val();
-        if (userName) {
-            if ($('#gidNumber').val() == '') { $('#gidNumber').val(0); }
-            if ($('#uid').val() == '') { $('#uid').val(userName); }
-            if ($('#msSFU30Name').val() == '') { $('#msSFU30Name').val(userName); }
-            if ($('#msSFU30NisDomain').val() == '') { $('#msSFU30NisDomain').val('chgrp'); }
-            if ($('#uidNumber').val() == '') { $('#uidNumber').val(''); }
-            if ($('#loginShell').val() == '') { $('#loginShell').val('/bin/bash'); }
-            if ($('#unixHomeDirectory').val() == '') { $('#unixHomeDirectory').val('/home/' + userName); }
-         }
+        let newUid = 0;
+        $.ajax({
+            url: '/get_new_uid/',
+            type: 'POST',
+            data: {
+                'csrfmiddlewaretoken': csrftoken,
+            },
+            success: function(response) {
+                let userName = $('#sAMAccountName').val();
+                const newUid = response.uidNumber;
+                const domain = response.domain;
+                console.log(response);
+                if (userName) {
+                    if ($('#gidNumber').val() == '') { $('#gidNumber').val(0); }
+                    if ($('#uid').val() == '') { $('#uid').val(userName); }
+                    if ($('#msSFU30Name').val() == '') { $('#msSFU30Name').val(userName); }
+                    if ($('#msSFU30NisDomain').val() == '') { $('#msSFU30NisDomain').val(domain); }
+                    if ($('#uidNumber').val() == '') { $('#uidNumber').val(newUid); }
+                    if ($('#loginShell').val() == '') { $('#loginShell').val('/bin/bash'); }
+                    if ($('#unixHomeDirectory').val() == '') { $('#unixHomeDirectory').val('/home/' + userName); }
+                 }
+                console.log('Ajax get_new_uid success');
+                showMessage('#result', 'Данные успешно получены. Теперь можете сохранить новые атрибуты пользователя. Не забудьте назначить группу!', 'alert-light')
+            },
+            error: function(xhr, status, error) {
+                console.log('Ajax get_new_uid error');
+            }
+        });
     });
     // ----
 });
