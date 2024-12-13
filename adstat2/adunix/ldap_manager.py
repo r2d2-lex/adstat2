@@ -64,6 +64,7 @@ class LdapManager:
         # self.connection.modify(user_dn, {'msSFU30Name': [(MODIFY_REPLACE, [new_msSFU30Name])]})
         status_string = ''
         result = False
+        status_string = status_log(f'Изменение атрибутов для записи {user_dn}.', status_string)
         for attribute, value in attributes.items():
             try:
                 self.connection.modify(user_dn, {attribute: [(MODIFY_REPLACE, [value])]})
