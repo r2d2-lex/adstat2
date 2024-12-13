@@ -56,6 +56,7 @@ $(document).ready(function() {
                     $('#uidNumber').val(data.uidNumber);
                     $('#loginShell').val(data.loginShell);
                     $('#unixHomeDirectory').val(data.unixHomeDirectory);
+                    showMessage('#result', 'Данные для пользователя: '+ data.sAMAccountName + ' успешно загружены!', 'alert-light');
                 },
                 error: function(xhr, status, error) {
                     console.error(error);
