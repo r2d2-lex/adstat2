@@ -71,7 +71,7 @@ class LdapManager:
                 else:
                     status_string = status_log(f"Ошибка при изменении атрибута {attribute}: {self.connection.result['description']}",
                                status_string)
-                    return result
+                    return result, status_string
             except (IndexError, KeyError, LDAPAttributeError) as err:
                 status_string = status_log(f'Что-то пошло не так... Ошибка: {err}', status_string)
                 return result, status_string
