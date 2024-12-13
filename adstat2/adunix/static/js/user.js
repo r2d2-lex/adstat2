@@ -124,6 +124,7 @@ $(document).ready(function() {
                 'csrfmiddlewaretoken': csrftoken,
             },
             success: function(response) {
+                $('#exampleModal').modal('hide');
                 showMessage('#result', splitStringToListItems(response.result), 'alert-warning');
                 let username = $('#msSFU30Name').val();
                 if (username) { load_user_values(username); }
