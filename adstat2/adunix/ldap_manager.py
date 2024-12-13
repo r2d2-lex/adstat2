@@ -36,6 +36,7 @@ def make_attribute_records(connection, master_attribute, description, attributes
 def status_log(message, status_string):
     logging.info(message)
     status_string = status_string + '\r\n' + message
+    status_string = status_string.lstrip('\r\n')
     return status_string
 
 
