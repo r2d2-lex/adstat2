@@ -1,7 +1,7 @@
 from loguru import logger as logging
 
 from ldap3 import Server, Connection, ALL, SUBTREE, ALL_ATTRIBUTES, MODIFY_REPLACE, MODIFY_DELETE
-from ldap3.core.exceptions import LDAPCursorAttributeError, LDAPKeyError, LDAPAttributeError
+from ldap3.core.exceptions import LDAPCursorAttributeError, LDAPKeyError, LDAPAttributeError, LDAPInvalidValueError
 
 from typing import List, Dict
 
@@ -77,7 +77,7 @@ class LdapManager:
                     status_string = status_log(f"Ошибка при изменении атрибута {attribute}: {self.connection.result['description']}",
                                status_string)
                     return result, status_string
-            except (IndexError, KeyError, LDAPAttributeError) as err:
+            except (IndexError, KeyError, LDAPAttributeError, LDAPInvalidValueError) as err:
                 status_string = status_log(f'Что-то пошло не так... Ошибка: {err}', status_string)
                 return result, status_string
         result = True
