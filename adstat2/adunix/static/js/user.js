@@ -110,4 +110,7 @@ $(document).ready(function() {
         });
     });
     // ----
+    $('#delete').click(function() {
+        alert('Вы нажали "Да"!');
+    });
 });

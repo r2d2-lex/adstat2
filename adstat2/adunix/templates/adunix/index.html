@@ -88,16 +88,19 @@
                     <label for="unixHomeDirectory">unixHomeDirectory: </label>
                     <input id="unixHomeDirectory" class="form-control" type="text" name="unixHomeDirectory" placeholder="">
                 </div>
-
-                <input class="btn btn-success" id="save" name="" type="text" value="Сохранить">
-                <input class="btn btn-success" id="clear" type="submit" value="Очистить">
                 </form>
+
+                <div class="form-group">
+                    <input class="btn btn-success" id="save" name="" type="button" value="Сохранить">
+                    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModal">Удалить атрибуты</button>
+                </div>
+
             </div>
         </div>
     </div>
 
     <div class="col"></div>
 </div>
-
+{% include "adunix/modal.html" %}
 </body>
 </html>
