@@ -57,6 +57,7 @@ function loadUserValues(username) {
         },
         error: function(xhr, status, error) {
             console.error(error);
+            showMessage('#result', 'Что то пошло не так!', 'alert-warning');
         }
     });
 }
@@ -111,6 +112,7 @@ $(document).ready(function() {
             },
             error: function(xhr, status, error) {
                 console.log('Ajax save error');
+                showMessage('#result', 'Что то пошло не так!', 'alert-warning');
             }
         });
     });
@@ -132,6 +134,7 @@ $(document).ready(function() {
             },
             error: function(xhr, status, error) {
                 console.log('Ajax delete error');
+                showMessage('#result', 'Что то пошло не так!', 'alert-warning');
             }
         });
     });
@@ -163,6 +166,7 @@ $(document).ready(function() {
             },
             error: function(xhr, status, error) {
                 console.log('Ajax get_new_uid error');
+                showMessage('#result', 'Что то пошло не так!', 'alert-warning');
             }
         });
     });
