@@ -35,7 +35,7 @@ function splitStringToListItems(inputString) {
     return ul.outerHTML;
 }
 
-function load_user_values(username) {
+function loadUserValues(username) {
     $.ajax({
         url: 'get_user_data',
         data: {
@@ -65,7 +65,7 @@ $(document).ready(function() {
     $('#users').change(function() {
         let username = $(this).val();
         if (username) {
-            load_user_values(username);
+            loadUserValues(username);
         } else {
             // Очистка полей, если пользователь не выбран
             $('#cn').val('');
@@ -80,7 +80,7 @@ $(document).ready(function() {
             $('#unixHomeDirectory').val('');
         }
     });
-
+    // ---- Назначение gidNumber
     $('#groups').change(function() {
         let gidNumber = $(this).val();
         if (gidNumber) {
@@ -89,7 +89,7 @@ $(document).ready(function() {
             //
         }
     });
-    // ----
+    // ---- Сохранение атрибутов
     $('#save').click(function() {
         $.ajax({
             url: '/update_user_data/',
@@ -114,7 +114,7 @@ $(document).ready(function() {
             }
         });
     });
-    // ----
+    // ---- Удаление атрибутов
     $('#delete').click(function() {
         $.ajax({
             url: '/delete_user_data/',
@@ -126,14 +126,27 @@ $(document).ready(function() {
             success: function(response) {
                 $('#exampleModal').modal('hide');
                 showMessage('#result', splitStringToListItems(response.result), 'alert-warning');
-                let username = $('#msSFU30Name').val();
-                if (username) { load_user_values(username); }
+                let username = $('#sAMAccountName').val();
+                if (username) { loadUserValues(username); }
                 console.log('Ajax delete success');
             },
             error: function(xhr, status, error) {
                 console.log('Ajax delete error');
             }
         });
+    });
+    // ---- Заполнение unix атрибутов
+    $('#fill').click(function() {
+        let userName = $('#sAMAccountName').val();
+        if (userName) {
+            if ($('#gidNumber').val() == '') { $('#gidNumber').val(0); }
+            if ($('#uid').val() == '') { $('#uid').val(userName); }
+            if ($('#msSFU30Name').val() == '') { $('#msSFU30Name').val(userName); }
+            if ($('#msSFU30NisDomain').val() == '') { $('#msSFU30NisDomain').val('chgrp'); }
+            if ($('#uidNumber').val() == '') { $('#uidNumber').val(''); }
+            if ($('#loginShell').val() == '') { $('#loginShell').val('/bin/bash'); }
+            if ($('#unixHomeDirectory').val() == '') { $('#unixHomeDirectory').val('/home/' + userName); }
+         }
     });
     // ----
 });
