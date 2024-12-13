@@ -25,18 +25,13 @@ function showMessage(id, message, classAlert) {
 }
 
 function splitStringToListItems(inputString) {
-    // Разбиваем строку по переносам строк
     const lines = inputString.split('\n');
-    // Создаём элемент ul
     const ul = document.createElement('ul');
-
-    // Проходим по каждой строке и создаём элемент li
     lines.forEach(line => {
         const li = document.createElement('li');
-        li.textContent = line; // Устанавливаем текст для li
-        ul.appendChild(li); // Добавляем li в ul
+        li.textContent = line;
+        ul.appendChild(li);
     });
-    // Возвращаем HTML-код списка
     return ul.outerHTML;
 }
 
@@ -106,14 +101,11 @@ $(document).ready(function() {
                 'csrfmiddlewaretoken': csrftoken,
             },
             success: function(response) {
-//                $('#result').text(response.result);
-//                showMessage('#result', response.result, 'alert-danger');
                 showMessage('#result', splitStringToListItems(response.result), 'alert-danger');
                 console.log('Всё хорошо');
             },
             error: function(xhr, status, error) {
                 console.log('Ошибка Ajax');
-                console.log(response.result);
             }
         });
     });
