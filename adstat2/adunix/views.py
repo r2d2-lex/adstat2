@@ -2,7 +2,7 @@ from django.http import JsonResponse
 from django.shortcuts import render
 from django.conf import settings
 from loguru import logger as logging
-from .ldap_manager import LdapManager
+from .ldap_manager import LdapManager, MODIFY_DELETE
 from .utils import safe_int
 
 
@@ -25,6 +25,32 @@ def update_user_data(request):
             with LdapManager(settings.LDAP_SERVER, settings.USERNAME, settings.PASSWORD,
                              settings.BASE_DN_ROOT) as ldap_manger:
                 result, result_message = ldap_manger.update_user_values(distinguished_name, unix_attributes)
+        return JsonResponse({'result': result_message})
+    return JsonResponse({'result': result_message}, status=400)
+
+
+def delete_user_data(request):
+    result_message = 'Ошибка удаления данных'
+    if request.method == 'POST':
+        distinguished_name = request.POST.get('distinguishedName', None)
+        logging.debug(f'distinguished_name: {distinguished_name}')
+        if distinguished_name:
+            unix_attributes = {
+                'gidNumber': None,
+                'uid': None,
+                'msSFU30Name': None,
+                'msSFU30NisDomain': None,
+                'uidNumber': None,
+                'loginShell': None,
+                'unixHomeDirectory': None,
+            }
+            with LdapManager(settings.LDAP_SERVER, settings.USERNAME, settings.PASSWORD,
+                             settings.BASE_DN_ROOT) as ldap_manger:
+                result, result_message = ldap_manger.update_user_values(
+                    distinguished_name,
+                    unix_attributes,
+                    MODIFY_DELETE
+                )
         return JsonResponse({'result': result_message})
     return JsonResponse({'result': result_message}, status=400)
 

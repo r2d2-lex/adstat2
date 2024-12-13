@@ -1,6 +1,6 @@
 from loguru import logger as logging
 
-from ldap3 import Server, Connection, ALL, SUBTREE, ALL_ATTRIBUTES, MODIFY_REPLACE
+from ldap3 import Server, Connection, ALL, SUBTREE, ALL_ATTRIBUTES, MODIFY_REPLACE, MODIFY_DELETE
 from ldap3.core.exceptions import LDAPCursorAttributeError, LDAPKeyError, LDAPAttributeError
 
 from typing import List, Dict
@@ -60,14 +60,17 @@ class LdapManager:
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.connection.unbind()
 
-    def update_user_values(self, user_dn, attributes:dict) -> (bool, str):
-        # self.connection.modify(user_dn, {'msSFU30Name': [(MODIFY_REPLACE, [new_msSFU30Name])]})
+    def update_user_values(self, user_dn, attributes: dict, operation=None) -> (bool, str):
         status_string = ''
         result = False
         status_string = status_log(f'Изменение атрибутов для записи {user_dn}.', status_string)
         for attribute, value in attributes.items():
             try:
-                self.connection.modify(user_dn, {attribute: [(MODIFY_REPLACE, [value])]})
+                if operation == MODIFY_DELETE:
+                    self.connection.modify(user_dn, {attribute: [(MODIFY_DELETE, [])]})
+                else:
+                    self.connection.modify(user_dn, {attribute: [(MODIFY_REPLACE, [value])]})
+
                 if self.connection.result['result'] == 0:
                     status_string = status_log(f'Атрибут {attribute} успешно изменен на {value}.', status_string)
                 else:

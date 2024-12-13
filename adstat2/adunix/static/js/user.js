@@ -35,33 +35,37 @@ function splitStringToListItems(inputString) {
     return ul.outerHTML;
 }
 
+function load_user_values(username) {
+    $.ajax({
+        url: 'get_user_data',
+        data: {
+            'username': username
+        },
+        dataType: 'json',
+        success: function(data) {
+            $('#cn').val(data.cn);
+            $('#sAMAccountName').val(data.sAMAccountName);
+            $('#distinguishedName').val(data.distinguishedName);
+            $('#gidNumber').val(data.gidNumber);
+            $('#uid').val(data.uid);
+            $('#msSFU30Name').val(data.msSFU30Name);
+            $('#msSFU30NisDomain').val(data.msSFU30NisDomain);
+            $('#uidNumber').val(data.uidNumber);
+            $('#loginShell').val(data.loginShell);
+            $('#unixHomeDirectory').val(data.unixHomeDirectory);
+            showMessage('#result', 'Данные для пользователя: '+ data.sAMAccountName + ' успешно загружены!', 'alert-light');
+        },
+        error: function(xhr, status, error) {
+            console.error(error);
+        }
+    });
+}
+
 $(document).ready(function() {
     $('#users').change(function() {
         let username = $(this).val();
         if (username) {
-            $.ajax({
-                url: 'get_user_data',
-                data: {
-                    'username': username
-                },
-                dataType: 'json',
-                success: function(data) {
-                    $('#cn').val(data.cn);
-                    $('#sAMAccountName').val(data.sAMAccountName);
-                    $('#distinguishedName').val(data.distinguishedName);
-                    $('#gidNumber').val(data.gidNumber);
-                    $('#uid').val(data.uid);
-                    $('#msSFU30Name').val(data.msSFU30Name);
-                    $('#msSFU30NisDomain').val(data.msSFU30NisDomain);
-                    $('#uidNumber').val(data.uidNumber);
-                    $('#loginShell').val(data.loginShell);
-                    $('#unixHomeDirectory').val(data.unixHomeDirectory);
-                    showMessage('#result', 'Данные для пользователя: '+ data.sAMAccountName + ' успешно загружены!', 'alert-light');
-                },
-                error: function(xhr, status, error) {
-                    console.error(error);
-                }
-            });
+            load_user_values(username);
         } else {
             // Очистка полей, если пользователь не выбран
             $('#cn').val('');
@@ -103,15 +107,32 @@ $(document).ready(function() {
             },
             success: function(response) {
                 showMessage('#result', splitStringToListItems(response.result), 'alert-light');
-                console.log('Всё хорошо');
+                console.log('Ajax save success');
             },
             error: function(xhr, status, error) {
-                console.log('Ошибка Ajax');
+                console.log('Ajax save error');
             }
         });
     });
     // ----
     $('#delete').click(function() {
-        alert('Вы нажали "Да"!');
+        $.ajax({
+            url: '/delete_user_data/',
+            type: 'POST',
+            data: {
+                'distinguishedName': $('#distinguishedName').val(),
+                'csrfmiddlewaretoken': csrftoken,
+            },
+            success: function(response) {
+                showMessage('#result', splitStringToListItems(response.result), 'alert-warning');
+                let username = $('#msSFU30Name').val();
+                if (username) { load_user_values(username); }
+                console.log('Ajax delete success');
+            },
+            error: function(xhr, status, error) {
+                console.log('Ajax delete error');
+            }
+        });
     });
+    // ----
 });
