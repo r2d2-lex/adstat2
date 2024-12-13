@@ -101,7 +101,7 @@ $(document).ready(function() {
                 'csrfmiddlewaretoken': csrftoken,
             },
             success: function(response) {
-                showMessage('#result', splitStringToListItems(response.result), 'alert-danger');
+                showMessage('#result', splitStringToListItems(response.result), 'alert-light');
                 console.log('Всё хорошо');
             },
             error: function(xhr, status, error) {
