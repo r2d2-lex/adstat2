@@ -1,3 +1,4 @@
+from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.conf import settings
@@ -7,6 +8,7 @@ from .ldap_manager import LdapManager, MODIFY_DELETE
 from .utils import safe_int, make_errors_result
 
 
+@login_required
 def update_user_data(request):
     result_message = 'Ошибка обновления данных'
     if request.method == 'POST':
@@ -35,6 +37,7 @@ def update_user_data(request):
     return JsonResponse({'result': result_message}, status=400)
 
 
+@login_required
 def delete_user_data(request):
     result_message = 'Ошибка удаления данных'
     if request.method == 'POST':
@@ -61,6 +64,7 @@ def delete_user_data(request):
     return JsonResponse({'result': result_message}, status=400)
 
 
+@login_required
 def get_user_data(request):
     username = request.GET.get('username')
     with LdapManager(settings.LDAP_SERVER, settings.USERNAME, settings.PASSWORD, settings.BASE_DN_ROOT) as ldap_manger:
@@ -73,6 +77,7 @@ def get_user_data(request):
     return JsonResponse(users_result)
 
 
+@login_required
 def get_new_uid(request):
     with LdapManager(settings.LDAP_SERVER, settings.USERNAME, settings.PASSWORD, settings.BASE_DN_ROOT) as ldap_manger:
         attribute_list = ['uidNumber']
@@ -81,6 +86,7 @@ def get_new_uid(request):
     return JsonResponse({'uidNumber': new_uid, 'domain': settings.DOMAIN})
 
 
+@login_required
 def index(request):
     logging.debug(f'SETTINGS "{settings.LDAP_SERVER}", "{settings.USERNAME}", "{settings.PASSWORD}", "{settings.BASE_DN_ROOT}"')
 
