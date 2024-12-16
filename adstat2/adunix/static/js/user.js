@@ -54,10 +54,12 @@ function loadUserValues(username) {
             $('#loginShell').val(data.loginShell);
             $('#unixHomeDirectory').val(data.unixHomeDirectory);
             showMessage('#result', 'Данные для пользователя: '+ data.sAMAccountName + ' успешно загружены!', 'alert-light');
+            console.log('Ajax get_user_data success');
         },
         error: function(xhr, status, error) {
+            console.log('Ajax get_user_data error');
             console.error(error);
-            showMessage('#result', 'Что то пошло не так!', 'alert-warning');
+            showMessage('#result', 'Что то пошло не так!', 'alert-danger');
         }
     });
 }
@@ -108,11 +110,11 @@ $(document).ready(function() {
             },
             success: function(response) {
                 showMessage('#result', splitStringToListItems(response.result), 'alert-light');
-                console.log('Ajax save success');
+                console.log('Ajax update_user_data success');
             },
             error: function(xhr, status, error) {
-                console.log('Ajax save error');
-                showMessage('#result', 'Что то пошло не так!', 'alert-warning');
+                console.log('Ajax update_user_data error');
+                showMessage('#result', 'Что то пошло не так!', 'alert-danger');
             }
         });
     });
@@ -130,11 +132,11 @@ $(document).ready(function() {
                 showMessage('#result', splitStringToListItems(response.result), 'alert-warning');
                 let username = $('#sAMAccountName').val();
                 if (username) { loadUserValues(username); }
-                console.log('Ajax delete success');
+                console.log('Ajax delete_user_data success');
             },
             error: function(xhr, status, error) {
-                console.log('Ajax delete error');
-                showMessage('#result', 'Что то пошло не так!', 'alert-warning');
+                console.log('Ajax delete_user_data error');
+                showMessage('#result', 'Что то пошло не так!', 'alert-danger');
             }
         });
     });
@@ -166,7 +168,7 @@ $(document).ready(function() {
             },
             error: function(xhr, status, error) {
                 console.log('Ajax get_new_uid error');
-                showMessage('#result', 'Что то пошло не так!', 'alert-warning');
+                showMessage('#result', 'Что то пошло не так!', 'alert-danger');
             }
         });
     });
