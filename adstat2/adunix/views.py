@@ -2,30 +2,36 @@ from django.http import JsonResponse
 from django.shortcuts import render
 from django.conf import settings
 from loguru import logger as logging
+from .forms import UnixAttrsForm
 from .ldap_manager import LdapManager, MODIFY_DELETE
-from .utils import safe_int
+from .utils import safe_int, make_errors_result
 
 
 def update_user_data(request):
     result_message = 'Ошибка обновления данных'
     if request.method == 'POST':
-        distinguished_name = request.POST.get('distinguishedName', None)
-        logging.debug(f'distinguished_name: {distinguished_name}')
-        if distinguished_name:
-            unix_attributes = {
-                'gidNumber': request.POST.get('gidNumber', None),
-                'uid': request.POST.get('uid', None),
-                'msSFU30Name': request.POST.get('msSFU30Name', None),
-                'msSFU30NisDomain': request.POST.get('msSFU30NisDomain', None),
-                'uidNumber': request.POST.get('uidNumber', None),
-                'loginShell': request.POST.get('loginShell', None),
-                'unixHomeDirectory': request.POST.get('unixHomeDirectory', None),
-            }
-            logging.debug(unix_attributes)
-            with LdapManager(settings.LDAP_SERVER, settings.USERNAME, settings.PASSWORD,
-                             settings.BASE_DN_ROOT) as ldap_manger:
-                result, result_message = ldap_manger.update_user_values(distinguished_name, unix_attributes)
-        return JsonResponse({'result': result_message})
+        unix_form = UnixAttrsForm(request.POST)
+        if unix_form.is_valid():
+            unix_form_attrs = unix_form.cleaned_data
+            distinguished_name = unix_form_attrs.get('distinguishedName', None)
+            logging.debug(f'distinguished_name: {distinguished_name}')
+            if distinguished_name:
+                unix_attributes = {
+                    'gidNumber': unix_form_attrs.get('gidNumber', None),
+                    'uid': unix_form_attrs.get('uid', None),
+                    'msSFU30Name': unix_form_attrs.get('msSFU30Name', None),
+                    'msSFU30NisDomain': unix_form_attrs.get('msSFU30NisDomain', None),
+                    'uidNumber': unix_form_attrs.get('uidNumber', None),
+                    'loginShell': unix_form_attrs.get('loginShell', None),
+                    'unixHomeDirectory': unix_form_attrs.get('unixHomeDirectory', None),
+                }
+                logging.debug(unix_attributes)
+                with LdapManager(settings.LDAP_SERVER, settings.USERNAME, settings.PASSWORD,
+                                 settings.BASE_DN_ROOT) as ldap_manger:
+                    result, result_message = ldap_manger.update_user_values(distinguished_name, unix_attributes)
+            return JsonResponse({'result': result_message})
+        else:
+            return JsonResponse({'result': make_errors_result(unix_form.errors)})
     return JsonResponse({'result': result_message}, status=400)
 
 
