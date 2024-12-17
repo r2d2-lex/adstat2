@@ -28,7 +28,7 @@ SECRET_KEY = 'django-insecure-u&0o5jf4u!@@e)9v98w28pvet3)d)b1f!2*2__n49u1w1c6ly7
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*',]
 
 
 # Application definition
@@ -118,7 +118,7 @@ LDAP_SERVER = env('LDAP_SERVER')
 BASE_DN_ROOT = env('BASE_DN_ROOT')
 DOMAIN = env('DOMAIN')
 
-
+STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
