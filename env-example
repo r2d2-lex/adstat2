@@ -1,0 +1,5 @@
+USERNAME='DOMAIN_COM\user'
+PASSWORD='Password'
+LDAP_SERVER='192.168.1.1'
+BASE_DN_ROOT='DC=domain,DC=com'
+DOMAIN='domain'
