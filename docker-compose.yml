@@ -1,0 +1,36 @@
+services:
+  logs_template: &logs_template
+    image: alpine
+    logging:
+      options:
+        max-size: "200k"
+        max-file: "7"
+
+  envs: &envs_template
+    image: alpine
+    environment:
+      - PYTHONDONTWRITEBYTECODE=1
+      - PYTHONUNBUFFERED=1
+
+  nginx:
+    container_name: nginx
+    image: nginx:1.27.3-alpine-slim
+    ports:
+      - 8000:80
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - static_volume:/adstat2/static
+    depends_on:
+      - adstat
+
+  adstat:
+    <<: [ *logs_template, *envs_template ]
+    container_name: adstat
+    build: .
+    restart: unless-stopped
+    volumes:
+      - static_volume:/adstat2/static
+    command: ["gunicorn", "adstat2.wsgi:application", "--bind", "0.0.0.0:8000"]
+
+volumes:
+  static_volume:
