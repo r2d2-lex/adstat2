@@ -18,12 +18,25 @@ BASE_DN_ROOT='DC=domain,DC=com'
 DOMAIN='domain'
 ```
 
-
-### 3. В корневой папке проекта выполните:
+### 3. Установи необходимые значения в settings.py:
 ```
-docker build -t adstat . 
-docker run -it --name=adstat -p 8000:8000 --hostname adstat adstat
+CSRF_TRUSTED_ORIGINS = ['http://localhost:8000', 'http://127.0.0.1:8000',]
 ```
 
+### 4. (Для Docker)В корневой папке проекта выполните:
+```
+docker compose build 
+docker compose up
+```
 
-### 4. Проверьте доступность ресурса по адресу http://{you_ip}:8000
+### 5. Не забудь создать суперпользователя в админке Django
+Если используешь docker, то для этого надо зайти в контейнер и сделать это:
+```
+# docker exec -it adstat /bin/sh
+```
+Создание суперпользователя в django:
+```commandline
+./manage.py createsuperuser
+```
+
+### 6. Проверьте доступность ресурса по адресу http://{you_ip}:8000
