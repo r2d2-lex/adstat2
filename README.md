@@ -40,3 +40,10 @@ docker compose up
 ```
 
 ### 6. Проверьте доступность ресурса по адресу http://{you_ip}:8000
+
+
+### Запуск тестов, запуск отдельного теста например:
+```commandline
+./manage.py test 
+./manage.py test adunix.tests.test_views.TestIndex
+```
