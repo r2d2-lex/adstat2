@@ -71,3 +71,99 @@ class GetNewUidViewTests(UserTestCase):
         self.assertEqual(json_response['domain'], settings.DOMAIN)
 
         mock_ldap_manager.get_users_list.assert_called_once_with(['uidNumber'])
+
+
+class UpdateUserDataViewTests(UserTestCase):
+
+    @patch('adunix.views.LdapManager')
+    def test_update_user_data_success(self, MockLdapManager):
+        mock_ldap_manager = MockLdapManager.return_value.__enter__.return_value
+        mock_ldap_manager.update_user_values.return_value = (True, 'Данные успешно обновлены')
+
+        response = self.client.post(reverse('adunix:update_user_data'), {
+            'distinguishedName': 'cn=testuser,dc=domain,dc=com',
+            'gidNumber': 1001,
+            'uid': 'testuser',
+            'msSFU30Name': 'testuser',
+            'msSFU30NisDomain': 'domain.com',
+            'uidNumber': 1001,
+            'loginShell': '/bin/bash',
+            'unixHomeDirectory': '/home/testuser',
+        })
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json(), {'result': 'Данные успешно обновлены'})
+
+    @patch('adunix.views.make_errors_result')
+    @patch('adunix.views.LdapManager')
+    def test_update_user_data_invalid_form(self, MockLdapManager, mock_make_errors_result):
+        mock_make_errors_result.return_value = 'Ошибка обновления данных'
+        response = self.client.post(reverse('adunix:update_user_data'), {
+            'distinguishedName': '',
+        })
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json(), {'result': 'Ошибка обновления данных'})
+
+
+class DeleteUserDataViewTests(UserTestCase):
+    @patch('adunix.views.LdapManager')
+    def test_delete_user_data_success(self, MockLdapManager):
+        mock_ldap_manager = MockLdapManager.return_value.__enter__.return_value
+        mock_ldap_manager.update_user_values.return_value = (True, 'Данные успешно удалены')
+
+        response = self.client.post(reverse('adunix:delete_user_data'), {
+            'distinguishedName': 'cn=testuser,dc=domain,dc=com',
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json(), {'result': 'Данные успешно удалены'})
+
+    @patch('adunix.views.LdapManager')
+    def test_delete_user_data_no_distinguished_name(self, MockLdapManager):
+        response = self.client.post(reverse('adunix:delete_user_data'), {
+            'distinguishedName': '',
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json(), {'result': 'Ошибка удаления данных'})
+
+
+class GetUserDataViewTests(UserTestCase):
+    @patch('adunix.views.LdapManager')
+    def test_get_user_data_success(self, MockLdapManager):
+        mock_ldap_manager = MockLdapManager.return_value.__enter__.return_value
+        mock_ldap_manager.get_sam_user.return_value = [{
+            'cn': 'testuser',
+            'uid': 'testuser',
+            'msSFU30Name': 'testuser',
+            'msSFU30NisDomain': 'domain.com',
+            'uidNumber': 1001,
+            'gidNumber': 1001,
+            'loginShell': '/bin/bash',
+            'unixHomeDirectory': '/home/testuser',
+            'distinguishedName': 'cn=testuser,dc=domain,dc=com',
+        }]
+
+        response = self.client.get(reverse('adunix:get_user_data'), {'username': 'testuser'})
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json(), {
+            'cn': 'testuser',
+            'uid': 'testuser',
+            'msSFU30Name': 'testuser',
+            'msSFU30NisDomain': 'domain.com',
+            'uidNumber': 1001,
+            'gidNumber': 1001,
+            'loginShell': '/bin/bash',
+            'unixHomeDirectory': '/home/testuser',
+            'distinguishedName': 'cn=testuser,dc=domain,dc=com',
+        })
+
+    @patch('adunix.views.LdapManager')
+    def test_get_user_data_user_not_found(self, MockLdapManager):
+        mock_ldap_manager = MockLdapManager.return_value.__enter__.return_value
+        mock_ldap_manager.get_sam_user.side_effect = IndexError
+
+        response = self.client.get(reverse('adunix:get_user_data'), {'username': 'nonexistentuser'})
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json(), {})
