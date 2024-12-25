@@ -21,6 +21,8 @@ class TestRegister(TestCase):
     def test_user_reqired_auth(self):
         response = self.client.get('/')
         self.assertRedirects(response, '/admin/login/?next=/')
+        response = self.client.post('/')
+        self.assertRedirects(response, '/admin/login/?next=/')
 
 
 class TestIndex(UserTestCase):
