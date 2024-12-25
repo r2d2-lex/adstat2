@@ -66,15 +66,25 @@ def delete_user_data(request):
 
 @staff_member_required
 def get_user_data(request):
+    result = {
+        'result_message': 'Ошибка загрузки данных',
+        'result': False,
+    }
+    user_result = {}
     username = request.GET.get('username')
     with LdapManager(settings.LDAP_SERVER, settings.USERNAME, settings.PASSWORD, settings.BASE_DN_ROOT) as ldap_manger:
         attribute_list = ['cn', 'uid', 'msSFU30Name', 'msSFU30NisDomain', 'uidNumber', 'gidNumber', 'loginShell',
                           'unixHomeDirectory', 'distinguishedName']
         try:
-            users_result = ldap_manger.get_sam_user(username, attribute_list)[0]
+            user_result = ldap_manger.get_sam_user(username, attribute_list)[0]
+            if user_result:
+                result = {
+                    'result_message': 'Данные получены',
+                    'result': True,
+                }
         except IndexError:
             logging.debug('Что то пошло не так...')
-    return JsonResponse(users_result)
+    return JsonResponse({**result, **user_result})
 
 
 @staff_member_required

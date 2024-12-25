@@ -43,17 +43,23 @@ function loadUserValues(username) {
         },
         dataType: 'json',
         success: function(data) {
-            $('#cn').val(data.cn);
-            $('#sAMAccountName').val(data.sAMAccountName);
-            $('#distinguishedName').val(data.distinguishedName);
-            $('#gidNumber').val(data.gidNumber);
-            $('#uid').val(data.uid);
-            $('#msSFU30Name').val(data.msSFU30Name);
-            $('#msSFU30NisDomain').val(data.msSFU30NisDomain);
-            $('#uidNumber').val(data.uidNumber);
-            $('#loginShell').val(data.loginShell);
-            $('#unixHomeDirectory').val(data.unixHomeDirectory);
-            showMessage('#result', 'Данные для пользователя: '+ data.sAMAccountName + ' успешно загружены!', 'alert-light');
+            const result = data.result;
+            const result_message = data.result_message;
+            if (result === true) {
+                showMessage('#result', 'Данные для пользователя: '+ data.sAMAccountName + ' успешно загружены!', 'alert-light');
+                $('#cn').val(data.cn);
+                $('#sAMAccountName').val(data.sAMAccountName);
+                $('#distinguishedName').val(data.distinguishedName);
+                $('#gidNumber').val(data.gidNumber);
+                $('#uid').val(data.uid);
+                $('#msSFU30Name').val(data.msSFU30Name);
+                $('#msSFU30NisDomain').val(data.msSFU30NisDomain);
+                $('#uidNumber').val(data.uidNumber);
+                $('#loginShell').val(data.loginShell);
+                $('#unixHomeDirectory').val(data.unixHomeDirectory);
+            } else {
+                showMessage('#result', result_message, 'alert-danger');
+            }
             console.log('Ajax get_user_data success');
         },
         error: function(xhr, status, error) {
