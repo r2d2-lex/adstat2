@@ -156,6 +156,8 @@ class GetUserDataViewTests(UserTestCase):
             'loginShell': '/bin/bash',
             'unixHomeDirectory': '/home/testuser',
             'distinguishedName': 'cn=testuser,dc=domain,dc=com',
+            'result_message': 'Данные получены',
+            'result': True,
         })
 
     @patch('adunix.views.LdapManager')
@@ -166,4 +168,4 @@ class GetUserDataViewTests(UserTestCase):
         response = self.client.get(reverse('adunix:get_user_data'), {'username': 'nonexistentuser'})
 
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json(), {})
+        self.assertEqual(response.json(), {'result_message': 'Ошибка загрузки данных', 'result': False})
