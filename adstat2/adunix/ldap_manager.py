@@ -19,13 +19,14 @@ def make_attribute_records(connection, master_attribute, description, attributes
                 logging.debug('___________________________')
                 logging.debug(f'{description}: {user_common_name}')
                 group_dict = {master_attribute: user_common_name}
-                for attribute in attributes:
-                    try:
-                        logging.debug(f'Атрибут: {attribute} Значение: {user_record[attribute].value}')
-                        group_dict[attribute] = user_record[attribute].value
-                    except LDAPKeyError as ee:
-                        logging.debug(f'Ошибка: Значение {attribute} не найдено: {ee}')
-                        group_dict[attribute] = ''
+                if attributes:
+                    for attribute in attributes:
+                        try:
+                            logging.debug(f'Атрибут: {attribute} Значение: {user_record[attribute].value}')
+                            group_dict[attribute] = user_record[attribute].value
+                        except LDAPKeyError as ee:
+                            logging.debug(f'Ошибка: Значение {attribute} не найдено: {ee}')
+                            group_dict[attribute] = ''
                 result.append(group_dict)
         except LDAPCursorAttributeError as e:
             logging.debug(f'Ошибка: {e}')
