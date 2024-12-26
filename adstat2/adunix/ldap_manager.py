@@ -8,6 +8,11 @@ from typing import List, Dict
 GROUP_SEARCH_FILTER = '(objectClass=group)'
 OU_SEARCH_FILTER = '(objectClass=organizationalUnit)'
 USER_SEARCH_FILTER = '(objectClass=user)'
+DEPARTMENT = 'department'
+LDAP_MEMBER_ATTR = 'sAMAccountName'
+LDAP_SEARCH_ATTR = 'displayName'
+GROUP_CN_PARAM = 'cn'
+USER_DN_PARAM = 'distinguishedName'
 
 
 def make_attribute_records(connection, master_attribute, description, attributes) -> List[Dict[str, str]]:
@@ -47,11 +52,6 @@ class LdapManager:
         self._username = username
         self._password = password
         self.scope = SUBTREE
-        self.department = 'department'
-        self.ldap_member_attr = 'sAMAccountName'
-        self.ldap_search_attr = 'displayName'
-        self.group_cn_param = 'cn'
-        self.user_dn_param = 'distinguishedName'
         self.base_dn = base_dn
 
     def __enter__(self):
@@ -86,7 +86,7 @@ class LdapManager:
 
     def get_groups_list(self, attributes=None) -> list:
         self.connection.search(self.base_dn, '(objectClass=group)', search_scope=self.scope, attributes=ALL_ATTRIBUTES)
-        return make_attribute_records(self.connection, self.group_cn_param, 'Группа', attributes)
+        return make_attribute_records(self.connection, GROUP_CN_PARAM, 'Группа', attributes)
 
     def get_organizational_units(self):
         self.connection.search(self.base_dn, '(objectClass=organizationalUnit)', search_scope=self.scope)
@@ -106,7 +106,7 @@ class LdapManager:
                                search_scope=self.scope,
                                attributes=ALL_ATTRIBUTES,
                                )
-        return make_attribute_records(self.connection, self.ldap_member_attr, 'Пользователь', attributes)
+        return make_attribute_records(self.connection, LDAP_MEMBER_ATTR, 'Пользователь', attributes)
 
     def get_users_list(self, attributes=None) -> list:
         self.connection.search(self.base_dn,
@@ -114,4 +114,4 @@ class LdapManager:
                                search_scope=self.scope,
                                attributes=ALL_ATTRIBUTES,
                                )
-        return make_attribute_records(self.connection, self.ldap_member_attr, 'Пользователь', attributes)
+        return make_attribute_records(self.connection, LDAP_MEMBER_ATTR, 'Пользователь', attributes)
