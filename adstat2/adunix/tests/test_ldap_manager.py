@@ -1,7 +1,8 @@
+import logging
 import unittest
 from unittest.mock import patch, MagicMock
-
-from ..ldap_manager import LdapManager
+from ldap3.core.exceptions import LDAPKeyError, LDAPCursorAttributeError
+from ..ldap_manager import LdapManager, make_attribute_records
 
 
 class TestLdapManager(unittest.TestCase):
@@ -45,6 +46,21 @@ class TestLdapManager(unittest.TestCase):
 
         groups = self.ldap_manager.get_groups_list()
         self.assertEqual(len(groups), 2)
+
+    def test_get_user_list(self):
+        self.mock_connection.entries = [MagicMock(), MagicMock()]
+        self.mock_connection.entries[0].sAMAccountName = 'user1'
+        self.mock_connection.entries[1].sAMAccountName = 'user2'
+
+        users = self.ldap_manager.get_users_list()
+        self.assertEqual(len(users), 2)
+
+    def test_make_attribute_records_master_attribute_must_exists(self):
+        self.mock_connection.entries = [{'test': 'test'}]
+        try:
+            make_attribute_records(self.mock_connection, 'Non_Exiten','Not_exiten_attribute', None)
+        except KeyError:
+            self.fail('Master attribute must exists')
 
 
 if __name__ == '__main__':
