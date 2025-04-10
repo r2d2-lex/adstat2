@@ -58,7 +58,7 @@
                     <label for="groups">Выберите группу: </label>
                     <select id="groups" class="form-select form-select-sm" name="groups" size="1">
                     <option value="" disabled selected>Выберите группу пользователя</option>
-                    {% for group in groups%}
+                    {% for group in groups %}
                         {% if group.cn and group.gidNumber %}
                             <option value="{{ group.gidNumber }}">{{ group.cn }}</option>
                         {% endif %}
