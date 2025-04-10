@@ -35,6 +35,16 @@ function splitStringToListItems(inputString) {
     return ul.outerHTML;
 }
 
+function setGroupValue(groupID) {
+    let $selectGroups = $('#groups');
+    $selectGroups.find('option').each(function() {
+        if (Number($(this).val()) == groupID) {
+            $(this).prop('selected', true);
+            return false;
+        }
+    });
+}
+
 function loadUserValues(username) {
     $.ajax({
         url: 'get_user_data',
@@ -47,6 +57,7 @@ function loadUserValues(username) {
             const result_message = data.result_message;
             if (result === true) {
                 showMessage('#result', 'Данные для пользователя: '+ data.sAMAccountName + ' успешно загружены!', 'alert-light');
+                setGroupValue(data.gidNumber);
                 $('#cn').val(data.cn);
                 $('#sAMAccountName').val(data.sAMAccountName);
                 $('#distinguishedName').val(data.distinguishedName);
