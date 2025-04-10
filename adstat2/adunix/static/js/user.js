@@ -37,12 +37,15 @@ function splitStringToListItems(inputString) {
 
 function setGroupValue(groupID) {
     let $selectGroups = $('#groups');
+    let status = false;
     $selectGroups.find('option').each(function() {
-        if (Number($(this).val()) == groupID) {
+        if (Number($(this).val()) === groupID) {
             $(this).prop('selected', true);
+            status = true;
             return false;
         }
     });
+    if (!status) { $selectGroups.prop('selectedIndex', 0); }
 }
 
 function loadUserValues(username) {
