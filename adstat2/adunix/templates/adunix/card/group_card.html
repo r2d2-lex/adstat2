@@ -1,0 +1,40 @@
+<div class="form-group mb-2">
+    <label for="grp_groups">Выберите группу: </label>
+    <select id="grp_groups" class="form-select form-select-sm" name="grp_groups" size="1">
+    <option value="" disabled selected>Выберите группу пользователя</option>
+    {% for group in groups %}
+        {% if group.cn and group.gidNumber %}
+            <option value="{{ group.gidNumber }}">{{ group.cn }}</option>
+        {% endif %}
+    {% endfor %}
+    </select>
+</div>
+
+<form method="post">
+    {% csrf_token %}
+
+<div class="form-group mb-2">
+    <label for="grp_gidNumber">gidNumber: (Максимальный gid: {{ max_gid }}):</label>
+    <input id="grp_gidNumber" class="form-control form-control-sm" type="text" name="grp_gidNumber" placeholder="">
+</div>
+
+<div class="form-group">
+    <label for="grp_msSFU30Name">msSFU30Name (Как cn): </label>
+    <input id="grp_msSFU30Name" class="form-control form-control-sm" type="text" name="grp_msSFU30Name" placeholder="">
+</div>
+
+<div class="form-group">
+    <label for="grp_description">description: </label>
+    <input id="grp_description" class="form-control form-control-sm" type="text" name="grp_description" placeholder="">
+</div>
+
+<div class="form-group">
+    <label for="grp_msSFU30NisDomain">msSFU30NisDomain: </label>
+    <input id="grp_msSFU30NisDomain" class="form-control form-control-sm" type="text" name="grp_msSFU30NisDomain" placeholder="">
+</div>
+</form>
+
+<div class="form-group">
+    <input class="btn btn-success" id="save_group" name="" type="button" value="Сохранить">
+    <input class="btn btn-info" id="fill_group" name="" type="button" value="Назначить">
+</div>

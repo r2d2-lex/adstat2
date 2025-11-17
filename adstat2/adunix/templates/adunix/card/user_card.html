@@ -1,0 +1,73 @@
+<div class="form-group mb-2">
+    <label for="users">Выберите пользователя: </label>
+    <select id="users" class="form-select form-select-sm" name="users" size="1">
+        <option value="" disabled selected>Выберите пользователя</option>
+        {% for user in users %}
+            <option value="{{ user.sAMAccountName }}">{{ user.cn }}</option>
+        {% endfor %}
+    </select>
+</div>
+
+<div class="form-group mb-2">
+    <label for="sAMAccountName">Login пользователя (sAMAccountName): </label>
+    <input id="sAMAccountName" class="form-control form-control-sm" type="text" name="sAMAccountName" placeholder="sAMAccountName" disabled readonly>
+</div>
+
+<input id="distinguishedName" class="form-control" type="hidden" name="distinguishedName" placeholder="" disabled readonly>
+
+<div class="form-group mb-2">
+    <label for="groups">Выберите группу: </label>
+    <select id="groups" class="form-select form-select-sm" name="groups" size="1">
+    <option value="" disabled selected>Выберите группу пользователя</option>
+    {% for group in groups %}
+        {% if group.cn and group.gidNumber %}
+            <option value="{{ group.gidNumber }}">{{ group.cn }}</option>
+        {% endif %}
+    {% endfor %}
+    </select>
+</div>
+<form method="post">
+    {% csrf_token %}
+
+<div class="form-group mb-2">
+    <label for="gidNumber">gidNumber: </label>
+    <input id="gidNumber" class="form-control form-control-sm" type="text" name="gidNumber" placeholder="">
+</div>
+
+<div class="form-group mb-2">
+    <label for="uid">uid (Как Login): </label>
+    <input id="uid" class="form-control form-control-sm" type="text" name="uid" placeholder="">
+</div>
+
+<div class="form-group">
+    <label for="msSFU30Name">msSFU30Name (Как Login): </label>
+    <input id="msSFU30Name" class="form-control form-control-sm" type="text" name="msSFU30Name" placeholder="">
+</div>
+
+<div class="form-group">
+    <label for="msSFU30NisDomain">msSFU30NisDomain: </label>
+    <input id="msSFU30NisDomain" class="form-control form-control-sm" type="text" name="msSFU30NisDomain" placeholder="">
+</div>
+
+<div class="form-group">
+    <label for="uidNumber">uidNumber (Максимальный uid: {{ max_uid }}): </label>
+    <input id="uidNumber" class="form-control form-control-sm" type="text" name="uidNumber" placeholder="">
+</div>
+
+<div class="form-group">
+    <label for="loginShell">loginShell: </label>
+    <input id="loginShell" class="form-control form-control-sm" type="text" name="loginShell" placeholder="">
+</div>
+
+<div class="form-group">
+    <label for="unixHomeDirectory">unixHomeDirectory: </label>
+    <input id="unixHomeDirectory" class="form-control form-control-sm" type="text" name="unixHomeDirectory" placeholder="">
+</div>
+</form>
+
+<div class="form-group">
+    <input class="btn btn-success" id="save" name="" type="button" value="Сохранить">
+    <input class="btn btn-info" id="fill" name="" type="button" value="Назначить">
+    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModal">Удалить</button>
+</div>
+
