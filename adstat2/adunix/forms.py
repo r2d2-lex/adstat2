@@ -10,3 +10,11 @@ class UnixAttrsForm(forms.Form):
     uidNumber = forms.IntegerField(label='uidNumber')
     loginShell = forms.CharField(label='loginShell')
     unixHomeDirectory = forms.CharField(label='unixHomeDirectory')
+
+
+class UnixAttrsGroupForms(forms.Form):
+    distinguishedName = forms.CharField(label='distinguishedName')
+    gidNumber = forms.IntegerField(label='gidNumber')
+    msSFU30Name = forms.CharField(label='msSFU30Name')
+    msSFU30NisDomain = forms.CharField(label='msSFU30NisDomain')
+    description = forms.CharField(label='description')
