@@ -106,6 +106,14 @@ class LdapManager:
                                )
         return make_attribute_records(self.connection, LDAP_MEMBER_ATTR, 'Пользователь', attributes)
 
+    def get_sam_group(self, sam_group_name, attributes) -> list:
+        self.connection.search(self.base_dn,
+                                '(&(objectClass=group)(sAMAccountName={}))'.format(sam_group_name),
+                               search_scope=self.scope,
+                               attributes=ALL_ATTRIBUTES,
+                               )
+        return make_attribute_records(self.connection, LDAP_MEMBER_ATTR, 'Группа', attributes)
+
     def get_users_list(self, attributes=None) -> list:
         self.connection.search(self.base_dn,
                                '(&(objectClass=user)(!(objectClass=computer)))',
