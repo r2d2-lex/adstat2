@@ -3,7 +3,7 @@ from django.http import JsonResponse
 from django.shortcuts import render
 from django.conf import settings
 from loguru import logger as logging
-from .forms import UnixAttrsForm
+from .forms import UnixAttrsForm, UnixAttrsGroupForms
 from .ldap_manager import LdapManager, MODIFY_DELETE
 from .utils import safe_int, make_errors_result
 
@@ -26,6 +26,32 @@ def update_user_data(request):
                     'uidNumber': unix_form_attrs.get('uidNumber', None),
                     'loginShell': unix_form_attrs.get('loginShell', None),
                     'unixHomeDirectory': unix_form_attrs.get('unixHomeDirectory', None),
+                }
+                logging.debug(unix_attributes)
+                with LdapManager(settings.LDAP_SERVER, settings.USERNAME, settings.PASSWORD,
+                                 settings.BASE_DN_ROOT) as ldap_manger:
+                    result, result_message = ldap_manger.update_user_values(distinguished_name, unix_attributes)
+            return JsonResponse({'result': result_message})
+        else:
+            return JsonResponse({'result': make_errors_result(unix_form.errors)})
+    return JsonResponse({'result': result_message}, status=400)
+
+
+@staff_member_required
+def update_group_data(request):
+    result_message = 'Ошибка обновления данных'
+    if request.method == 'POST':
+        unix_form = UnixAttrsGroupForms(request.POST)
+        if unix_form.is_valid():
+            unix_form_attrs = unix_form.cleaned_data
+            distinguished_name = unix_form_attrs.get('distinguishedName', None)
+            logging.debug(f'distinguished_name: {distinguished_name}')
+            if distinguished_name:
+                unix_attributes = {
+                    'gidNumber': unix_form_attrs.get('gidNumber', None),
+                    'msSFU30Name': unix_form_attrs.get('msSFU30Name', None),
+                    'msSFU30NisDomain': unix_form_attrs.get('msSFU30Name', None),
+                    'description': unix_form_attrs.get('description', None),
                 }
                 logging.debug(unix_attributes)
                 with LdapManager(settings.LDAP_SERVER, settings.USERNAME, settings.PASSWORD,
@@ -97,7 +123,7 @@ def get_group_data(request):
     group_name = request.GET.get('groupname')
     logging.debug(f'group_name {group_name}')
     with LdapManager(settings.LDAP_SERVER, settings.USERNAME, settings.PASSWORD, settings.BASE_DN_ROOT) as ldap_manger:
-        attribute_list = ['cn', 'msSFU30Name', 'msSFU30NisDomain', 'gidNumber', 'description']
+        attribute_list = ['cn', 'msSFU30Name', 'msSFU30NisDomain', 'gidNumber', 'description', 'distinguishedName']
 
         try:
             group_result = ldap_manger.get_sam_group(group_name, attribute_list)[0]

@@ -97,7 +97,7 @@ function loadGroupValues(groupname) {
             if (result === true) {
                 showMessage('#result', 'Данные для группы: '+ data.sAMAccountName + ' успешно загружены!', 'alert-light');
                 //setGroupValue(data.gidNumber);
-                $('#cn').val(data.cn);
+                $('#grp_distinguishedName').val(data.distinguishedName);
                 $('#grp_sAMAccountName').val(data.sAMAccountName);
                 $('#grp_gidNumber').val(data.gidNumber);
                 $('#grp_msSFU30Name').val(data.msSFU30Name);
@@ -118,6 +118,7 @@ function loadGroupValues(groupname) {
 
 $(document).ready(function() {
 
+// ----------------------------- Карточка группы ----------------------------- //
     $('#grp_groups').change(function() {
         let groupname = $(this).val();
         if (groupname) {
@@ -125,6 +126,7 @@ $(document).ready(function() {
             loadGroupValues(groupname);
         } else {
             // Очистка полей, если группа не выбрана
+            $('#grp_distinguishedName').val('');
             $('#grp_sAMAccountName').val('');
             $('#grp_gidNumber').val('');
             $('#grp_msSFU30Name').val('');
@@ -132,6 +134,32 @@ $(document).ready(function() {
             $('#grp_msSFU30NisDomain').val('');
         }
     });
+        // ---- Сохранение атрибутов
+    $('#save_group').click(function() {
+        $.ajax({
+            url: '/update_group_data/',
+            type: 'POST',
+            data: {
+                'distinguishedName': $('#grp_distinguishedName').val(),
+                'gidNumber': $('#grp_gidNumber').val(),
+                'msSFU30Name': $('#grp_msSFU30Name').val(),
+                'msSFU30NisDomain': $('#grp_msSFU30NisDomain').val(),
+                'description': $('#grp_description').val(),
+                'csrfmiddlewaretoken': csrftoken,
+            },
+            success: function(response) {
+                showMessage('#result', splitStringToListItems(response.result), 'alert-light');
+                console.log('Ajax update_group_data success');
+            },
+            error: function(xhr, status, error) {
+                console.log('Ajax update_group_data error');
+                showMessage('#result', 'Что то пошло не так!', 'alert-danger');
+            }
+        });
+    });
+
+
+// ----------------------------- Карточка пользователя ----------------------------- //
 
     $('#users').change(function() {
         let username = $(this).val();
