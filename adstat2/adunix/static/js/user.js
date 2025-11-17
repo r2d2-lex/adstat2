@@ -84,7 +84,55 @@ function loadUserValues(username) {
     });
 }
 
+function loadGroupValues(groupname) {
+    $.ajax({
+        url: 'get_group_data',
+        data: {
+            'groupname': groupname
+        },
+        dataType: 'json',
+        success: function(data) {
+            const result = data.result;
+            const result_message = data.result_message;
+            if (result === true) {
+                showMessage('#result', 'Данные для группы: '+ data.sAMAccountName + ' успешно загружены!', 'alert-light');
+                //setGroupValue(data.gidNumber);
+                $('#cn').val(data.cn);
+                $('#grp_sAMAccountName').val(data.sAMAccountName);
+                $('#grp_gidNumber').val(data.gidNumber);
+                $('#grp_msSFU30Name').val(data.msSFU30Name);
+                $('#grp_msSFU30NisDomain').val(data.msSFU30NisDomain);
+                $('#grp_description').val(data.description);
+            } else {
+                showMessage('#result', result_message, 'alert-danger');
+            }
+            console.log('Ajax get_group_data success');
+        },
+        error: function(xhr, status, error) {
+            console.log('Ajax get_group_data error');
+            console.error(error);
+            showMessage('#result', 'Что то пошло не так!', 'alert-danger');
+        }
+    });
+}
+
 $(document).ready(function() {
+
+    $('#grp_groups').change(function() {
+        let groupname = $(this).val();
+        if (groupname) {
+            console.log('grp_groups');
+            loadGroupValues(groupname);
+        } else {
+            // Очистка полей, если группа не выбрана
+            $('#grp_sAMAccountName').val('');
+            $('#grp_gidNumber').val('');
+            $('#grp_msSFU30Name').val('');
+            $('#grp_description').val('');
+            $('#grp_msSFU30NisDomain').val('');
+        }
+    });
+
     $('#users').change(function() {
         let username = $(this).val();
         if (username) {
