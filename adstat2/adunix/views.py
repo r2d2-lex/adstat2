@@ -88,6 +88,30 @@ def get_user_data(request):
 
 
 @staff_member_required
+def get_group_data(request):
+    result = {
+        'result_message': 'Ошибка загрузки данных',
+        'result': False,
+    }
+    group_result = {}
+    group_name = request.GET.get('groupname')
+    logging.debug(f'group_name {group_name}')
+    with LdapManager(settings.LDAP_SERVER, settings.USERNAME, settings.PASSWORD, settings.BASE_DN_ROOT) as ldap_manger:
+        attribute_list = ['cn', 'msSFU30Name', 'msSFU30NisDomain', 'gidNumber', 'description']
+
+        try:
+            group_result = ldap_manger.get_sam_group(group_name, attribute_list)[0]
+            if group_result:
+                result = {
+                    'result_message': 'Данные получены',
+                    'result': True,
+                }
+        except IndexError:
+            logging.debug('Что то пошло не так...')
+    return JsonResponse({**result, **group_result})
+
+
+@staff_member_required
 def get_new_uid(request):
     with LdapManager(settings.LDAP_SERVER, settings.USERNAME, settings.PASSWORD, settings.BASE_DN_ROOT) as ldap_manger:
         attribute_list = ['uidNumber']
@@ -102,9 +126,10 @@ def index(request):
 
     with LdapManager(settings.LDAP_SERVER, settings.USERNAME, settings.PASSWORD, settings.BASE_DN_ROOT) as ldap_manger:
         # Получение информации о группах
-        attribute_list = ['gidNumber', 'description']
+        attribute_list = ['gidNumber', 'description', 'sAMAccountName']
         group_result = ldap_manger.get_groups_list(attribute_list)
         group_result = sorted(group_result, key=lambda x: x['cn'])
+        max_gid = max([safe_int(item.get('gidNumber', 0)) for item in group_result])
 
         # # Получение информации о пользователях
         attribute_list = ['cn', 'uidNumber']
@@ -116,5 +141,6 @@ def index(request):
             'groups': group_result,
             'users': users_result,
             'max_uid': max_uid,
+            'max_gid': max_gid,
         }
     return render(request, 'adunix/index.html', context)
