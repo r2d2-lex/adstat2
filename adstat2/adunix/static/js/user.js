@@ -1,3 +1,7 @@
+const update_user_data = 'user_form';
+const update_group_data = 'group_form';
+const url_update_user_data = '/update_user_data/'
+
 function getCookie(name) {
     let cookieValue = null;
     if (document.cookie && document.cookie !== '') {
@@ -137,9 +141,10 @@ $(document).ready(function() {
         // ---- Сохранение атрибутов
     $('#save_group').click(function() {
         $.ajax({
-            url: '/update_group_data/',
+            url: url_update_user_data,
             type: 'POST',
             data: {
+                'action': update_group_data,
                 'distinguishedName': $('#grp_distinguishedName').val(),
                 'gidNumber': $('#grp_gidNumber').val(),
                 'msSFU30Name': $('#grp_msSFU30Name').val(),
@@ -191,9 +196,10 @@ $(document).ready(function() {
     // ---- Сохранение атрибутов
     $('#save').click(function() {
         $.ajax({
-            url: '/update_user_data/',
+            url: url_update_user_data,
             type: 'POST',
             data: {
+                'action': update_user_data,
                 'distinguishedName': $('#distinguishedName').val(),
                 'gidNumber': $('#gidNumber').val(),
                 'uid': $('#uid').val(),

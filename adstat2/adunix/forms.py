@@ -1,6 +1,10 @@
 from django import forms
 
 
+class ActionForm(forms.Form):
+    action = forms.CharField()
+
+
 class UnixAttrsForm(forms.Form):
     distinguishedName = forms.CharField(label='distinguishedName')
     gidNumber = forms.IntegerField(label='gidNumber')
