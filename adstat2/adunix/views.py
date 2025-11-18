@@ -9,7 +9,7 @@ from .utils import safe_int, make_errors_result
 
 UPDATE_USER_DATA = 'user_form'
 UPDATE_GROUP_DATA = 'group_form'
-
+DISTINGUISHED_NAME = 'distinguishedName'
 
 @staff_member_required
 def update_user_data(request):
@@ -24,10 +24,10 @@ def update_user_data(request):
         unix_form = form_class(request.POST)
         if unix_form.is_valid():
             unix_form_attrs = unix_form.cleaned_data
-            distinguished_name = unix_form_attrs.get('distinguishedName', None)
-            logging.debug(f'distinguished_name: {distinguished_name}')
+            distinguished_name = unix_form_attrs.get(DISTINGUISHED_NAME, None)
+            logging.debug(f'{DISTINGUISHED_NAME}: {distinguished_name}')
             if distinguished_name:
-                exclude = {'distinguishedName'}
+                exclude = {DISTINGUISHED_NAME}
                 unix_attributes = {k: unix_form_attrs.get(k, None) for k in unix_form_attrs if k not in exclude}
                 logging.debug(unix_attributes)
                 with LdapManager(settings.LDAP_SERVER, settings.USERNAME, settings.PASSWORD,
@@ -43,8 +43,8 @@ def update_user_data(request):
 def delete_user_data(request):
     result_message = 'Ошибка удаления данных'
     if request.method == 'POST':
-        distinguished_name = request.POST.get('distinguishedName', None)
-        logging.debug(f'distinguished_name: {distinguished_name}')
+        distinguished_name = request.POST.get(DISTINGUISHED_NAME, None)
+        logging.debug(f'{DISTINGUISHED_NAME}: {distinguished_name}')
         if distinguished_name:
             unix_attributes = {
                 'gidNumber': None,
@@ -76,7 +76,7 @@ def get_user_data(request):
     username = request.GET.get('username')
     with LdapManager(settings.LDAP_SERVER, settings.USERNAME, settings.PASSWORD, settings.BASE_DN_ROOT) as ldap_manger:
         attribute_list = ['cn', 'uid', 'msSFU30Name', 'msSFU30NisDomain', 'uidNumber', 'gidNumber', 'loginShell',
-                          'unixHomeDirectory', 'distinguishedName']
+                          'unixHomeDirectory', DISTINGUISHED_NAME]
         try:
             user_result = ldap_manger.get_sam_user(username, attribute_list)[0]
             if user_result:
@@ -99,7 +99,7 @@ def get_group_data(request):
     group_name = request.GET.get('groupname')
     logging.debug(f'group_name {group_name}')
     with LdapManager(settings.LDAP_SERVER, settings.USERNAME, settings.PASSWORD, settings.BASE_DN_ROOT) as ldap_manger:
-        attribute_list = ['cn', 'msSFU30Name', 'msSFU30NisDomain', 'gidNumber', 'description', 'distinguishedName']
+        attribute_list = ['cn', 'msSFU30Name', 'msSFU30NisDomain', 'gidNumber', 'description', DISTINGUISHED_NAME]
 
         try:
             group_result = ldap_manger.get_sam_group(group_name, attribute_list)[0]
