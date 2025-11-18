@@ -54,7 +54,7 @@ function setGroupValue(groupID) {
 
 function loadUserValues(username) {
     $.ajax({
-        url: 'get_user_data',
+        url: '/get_user_data/',
         data: {
             'username': username
         },
@@ -90,7 +90,7 @@ function loadUserValues(username) {
 
 function loadGroupValues(groupname) {
     $.ajax({
-        url: 'get_group_data',
+        url: '/get_group_data/',
         data: {
             'groupname': groupname
         },
