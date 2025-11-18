@@ -62,7 +62,7 @@ class LdapManager:
     def update_user_values(self, user_dn, attributes: dict, operation=None) -> (bool, str):
         status_string = ''
         result = False
-        status_string = status_log(f'Изменение атрибутов для записи {user_dn}.', status_string)
+        status_string = status_log(f'Изменение атрибутов для записи "{user_dn}"', status_string)
         for attribute, value in attributes.items():
             try:
                 if operation == MODIFY_DELETE:
@@ -71,10 +71,11 @@ class LdapManager:
                     self.connection.modify(user_dn, {attribute: [(MODIFY_REPLACE, [value])]})
 
                 if self.connection.result['result'] == 0:
-                    status_string = status_log(f'Атрибут {attribute} успешно изменен на {value}.', status_string)
+                    status_string = status_log(f'Атрибут {attribute} успешно изменен на "{value}"', status_string)
                 else:
-                    status_string = status_log(f"Ошибка при изменении атрибута {attribute}: {self.connection.result['description']}",
-                               status_string)
+                    status_string = status_log(
+                        f"Ошибка при изменении атрибута \"{attribute}\": {self.connection.result['description']}",
+                        status_string)
                     return result, status_string
             except (IndexError, KeyError, LDAPAttributeError, LDAPInvalidValueError) as err:
                 status_string = status_log(f'Что-то пошло не так... Ошибка: {err}', status_string)
@@ -108,7 +109,7 @@ class LdapManager:
 
     def get_sam_group(self, sam_group_name, attributes) -> list:
         self.connection.search(self.base_dn,
-                                '(&(objectClass=group)(sAMAccountName={}))'.format(sam_group_name),
+                               '(&(objectClass=group)(sAMAccountName={}))'.format(sam_group_name),
                                search_scope=self.scope,
                                attributes=ALL_ATTRIBUTES,
                                )
