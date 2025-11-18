@@ -1,6 +1,14 @@
 const update_user_data = 'user_form';
 const update_group_data = 'group_form';
-const url_update_user_data = '/update_user_data/'
+const url_update_user_data = '/update_user_data/';
+const url_get_user_data = '/get_user_data/'
+const user_data = 'user';
+const group_data = 'group';
+
+const action_field = 'action';
+const user_field = 'username';
+const group_field = 'groupname';
+
 
 function getCookie(name) {
     let cookieValue = null;
@@ -54,9 +62,10 @@ function setGroupValue(groupID) {
 
 function loadUserValues(username) {
     $.ajax({
-        url: '/get_user_data/',
+        url: url_get_user_data,
         data: {
-            'username': username
+            [action_field]: user_data,
+            [user_field]: username
         },
         dataType: 'json',
         success: function(data) {
@@ -88,11 +97,12 @@ function loadUserValues(username) {
     });
 }
 
-function loadGroupValues(groupname) {
+function loadGroupValues(groupName) {
     $.ajax({
-        url: '/get_group_data/',
+        url: url_get_user_data,
         data: {
-            'groupname': groupname
+            [action_field]: group_data,
+            [group_field]: groupName
         },
         dataType: 'json',
         success: function(data) {

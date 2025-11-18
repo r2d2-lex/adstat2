@@ -10,6 +10,12 @@ from .utils import safe_int, make_errors_result
 UPDATE_USER_DATA = 'user_form'
 UPDATE_GROUP_DATA = 'group_form'
 DISTINGUISHED_NAME = 'distinguishedName'
+USER_DATA = 'user'
+GROUP_DATA = 'group'
+ACTION_FIELD = 'action'
+USER_FIELD = 'username'
+GROUP_FIELD = 'groupname'
+
 
 @staff_member_required
 def update_user_data(request):
@@ -73,12 +79,27 @@ def get_user_data(request):
         'result': False,
     }
     user_result = {}
-    username = request.GET.get('username')
-    with LdapManager(settings.LDAP_SERVER, settings.USERNAME, settings.PASSWORD, settings.BASE_DN_ROOT) as ldap_manger:
+    user_name = ''
+    group_name = ''
+    attribute_list = []
+
+    action = request.GET.get(ACTION_FIELD)
+    if action == USER_DATA:
+        user_name = request.GET.get(USER_FIELD)
         attribute_list = ['cn', 'uid', 'msSFU30Name', 'msSFU30NisDomain', 'uidNumber', 'gidNumber', 'loginShell',
                           'unixHomeDirectory', DISTINGUISHED_NAME]
+    elif action == GROUP_DATA:
+        group_name = request.GET.get(GROUP_FIELD)
+        attribute_list = ['cn', 'msSFU30Name', 'msSFU30NisDomain', 'gidNumber', 'description', DISTINGUISHED_NAME]
+
+    logging.debug(f'Action: {action or "something wrong"} {(user_name or group_name) or "something wrong"}')
+    with LdapManager(settings.LDAP_SERVER, settings.USERNAME, settings.PASSWORD, settings.BASE_DN_ROOT) as ldap_manger:
         try:
-            user_result = ldap_manger.get_sam_user(username, attribute_list)[0]
+            if action == USER_DATA:
+                user_result = ldap_manger.get_sam_user(user_name, attribute_list)[0]
+            if action == GROUP_DATA:
+                user_result = ldap_manger.get_sam_group(group_name, attribute_list)[0]
+
             if user_result:
                 result = {
                     'result_message': 'Данные получены',
@@ -87,30 +108,6 @@ def get_user_data(request):
         except IndexError:
             logging.debug('Что то пошло не так...')
     return JsonResponse({**result, **user_result})
-
-
-@staff_member_required
-def get_group_data(request):
-    result = {
-        'result_message': 'Ошибка загрузки данных',
-        'result': False,
-    }
-    group_result = {}
-    group_name = request.GET.get('groupname')
-    logging.debug(f'group_name {group_name}')
-    with LdapManager(settings.LDAP_SERVER, settings.USERNAME, settings.PASSWORD, settings.BASE_DN_ROOT) as ldap_manger:
-        attribute_list = ['cn', 'msSFU30Name', 'msSFU30NisDomain', 'gidNumber', 'description', DISTINGUISHED_NAME]
-
-        try:
-            group_result = ldap_manger.get_sam_group(group_name, attribute_list)[0]
-            if group_result:
-                result = {
-                    'result_message': 'Данные получены',
-                    'result': True,
-                }
-        except IndexError:
-            logging.debug('Что то пошло не так...')
-    return JsonResponse({**result, **group_result})
 
 
 @staff_member_required
