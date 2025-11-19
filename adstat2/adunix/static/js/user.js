@@ -148,7 +148,7 @@ $(document).ready(function() {
             $('#grp_msSFU30NisDomain').val('');
         }
     });
-        // ---- Сохранение атрибутов
+    // ---- Сохранение атрибутов группы
     $('#save_group').click(function() {
         $.ajax({
             url: url_update_user_data,
@@ -169,6 +169,36 @@ $(document).ready(function() {
             error: function(xhr, status, error) {
                 console.log('Ajax update_group_data error');
                 showMessage('#result', 'Что то пошло не так!', 'alert-danger');
+            }
+        });
+    });
+
+    // ---- Заполнение unix атрибутов группы
+    $('#fill_group').click(function() {
+        let newGid = 0;
+        $.ajax({
+            url: '/get_new_gid/',
+            type: 'POST',
+            data: {
+                'csrfmiddlewaretoken': csrftoken,
+            },
+            success: function(response) {
+                let groupName = $('#grp_sAMAccountName').val();
+                const newGid = response.gidNumber;
+                const domain = response.domain;
+                console.log(response);
+                if (groupName) {
+                    if ($('#grp_gidNumber').val() == '') { $('#grp_gidNumber').val(newGid); }
+                    if ($('#grp_msSFU30Name').val() == '') { $('#grp_msSFU30Name').val(groupName); }
+                    if ($('#grp_description').val() == '') { $('#grp_description').val('Введите описание группы'); }
+                    if ($('#grp_msSFU30NisDomain').val() == '') { $('#grp_msSFU30NisDomain').val(domain); }
+                 }
+                console.log('Ajax get_new_gid success');
+                showMessage('#result', 'Данные успешно получены. Не забудьте назначить описание для группы!', 'alert-light')
+            },
+            error: function(xhr, status, error) {
+                console.log('Ajax get_new_gid error');
+                showMessage('#result', 'Что-то пошло не так!', 'alert-danger');
             }
         });
     });

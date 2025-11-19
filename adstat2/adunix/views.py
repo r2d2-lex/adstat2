@@ -119,6 +119,13 @@ def get_new_uid(request):
     return JsonResponse({'uidNumber': new_uid, 'domain': settings.DOMAIN})
 
 
+def get_new_gid(request):
+    with LdapManager(settings.LDAP_SERVER, settings.USERNAME, settings.PASSWORD, settings.BASE_DN_ROOT) as ldap_manger:
+        group_result = ldap_manger.get_groups_list(['gidNumber'])
+        new_gid = max([safe_int(item.get('gidNumber', 0)) for item in group_result]) + 1
+    return JsonResponse({'gidNumber': new_gid, 'domain': settings.DOMAIN})
+
+
 @staff_member_required
 def index(request):
     logging.debug(f'SETTINGS "{settings.LDAP_SERVER}", "{settings.USERNAME}", "{settings.PASSWORD}", "{settings.BASE_DN_ROOT}"')
