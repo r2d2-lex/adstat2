@@ -1,7 +1,8 @@
 ## ADStat.
 
 ### Пример отображения в браузере:
-![Browser preview](png/adstat.png)
+![Browser preview](png/adstat_user.png)
+![Browser preview](png/adstat_group.png)
 
 ## Установка ADStat:
 ### 1. Скопируйте файл настроек в директорию с проектом Django:
