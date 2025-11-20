@@ -9,6 +9,9 @@ const action_field = 'action';
 const user_field = 'username';
 const group_field = 'groupname';
 
+const btnDeleteUser = 'delete_user';
+const btnDeleteGroup = 'delete_group';
+let deleButton = '';
 
 function getCookie(name) {
     let cookieValue = null;
@@ -131,6 +134,14 @@ function loadGroupValues(groupName) {
 }
 
 $(document).ready(function() {
+
+$('#deleteModal').on('show.bs.modal', function (event) {
+  const button = $(event.relatedTarget);
+  const callerId = button.data('id') || button.attr('id');
+  deleButton =  callerId;
+  console.log('deleButton: ' + callerId);
+});
+
 
 // ----------------------------- Карточка группы ----------------------------- //
     $('#grp_groups').change(function() {
@@ -260,20 +271,41 @@ $(document).ready(function() {
             }
         });
     });
+
     // ---- Удаление атрибутов
     $('#delete').click(function() {
+        let distinguishedName = '';
+        let action = '';
+        if (deleButton === btnDeleteUser) {
+            distinguishedName = $('#distinguishedName').val();
+            action = update_user_data;
+            console.log('Delete Unix user: ' + distinguishedName);
+        }
+        if (deleButton === btnDeleteGroup) {
+            distinguishedName = $('#grp_distinguishedName').val();
+            action = update_group_data;
+            console.log('Delete Unix group: ' + distinguishedName);
+        }
+
         $.ajax({
             url: '/delete_user_data/',
             type: 'POST',
             data: {
-                'distinguishedName': $('#distinguishedName').val(),
+                [action_field]: action,
+                'distinguishedName': distinguishedName,
                 'csrfmiddlewaretoken': csrftoken,
             },
             success: function(response) {
-                $('#exampleModal').modal('hide');
+                $('#deleteModal').modal('hide');
                 showMessage('#result', splitStringToListItems(response.result), 'alert-warning');
-                let username = $('#sAMAccountName').val();
-                if (username) { loadUserValues(username); }
+                if (deleButton === btnDeleteUser) {
+                    let username = $('#sAMAccountName').val();
+                    if (username) { loadUserValues(username); }
+                }
+                if (deleButton === btnDeleteGroup) {
+                    let groupName = $('#grp_sAMAccountName').val();
+                    if (groupName) { loadGroupValues(groupName); }
+                }
                 console.log('Ajax delete_user_data success');
             },
             error: function(xhr, status, error) {
@@ -282,6 +314,7 @@ $(document).ready(function() {
             }
         });
     });
+
     // ---- Заполнение unix атрибутов
     $('#fill').click(function() {
         let newUid = 0;

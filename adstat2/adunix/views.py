@@ -49,18 +49,21 @@ def update_user_data(request):
 def delete_user_data(request):
     result_message = 'Ошибка удаления данных'
     if request.method == 'POST':
+        request_action = request.POST.get('action')
+        form_map = {
+            UPDATE_USER_DATA: UnixAttrsForm,
+            UPDATE_GROUP_DATA: UnixAttrsGroupForms,
+        }
+        form_class = form_map.get(request_action, ActionForm)
+        unix_form = form_class(request.POST)
+
         distinguished_name = request.POST.get(DISTINGUISHED_NAME, None)
-        logging.debug(f'{DISTINGUISHED_NAME}: {distinguished_name}')
+        logging.info(f'{DISTINGUISHED_NAME}: {distinguished_name}')
+
+        exclude = {DISTINGUISHED_NAME}
+        unix_attributes = {name: None for name in unix_form.base_fields if name not in exclude}
         if distinguished_name:
-            unix_attributes = {
-                'gidNumber': None,
-                'uid': None,
-                'msSFU30Name': None,
-                'msSFU30NisDomain': None,
-                'uidNumber': None,
-                'loginShell': None,
-                'unixHomeDirectory': None,
-            }
+            logging.debug(unix_attributes)
             with LdapManager(settings.LDAP_SERVER, settings.USERNAME, settings.PASSWORD,
                              settings.BASE_DN_ROOT) as ldap_manger:
                 result, result_message = ldap_manger.update_user_values(
